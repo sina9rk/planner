@@ -4,10 +4,102 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------
+// Users
+// persona_id عمداً String است نه enum: تعداد و نام پرسونا در
+// فایل‌های JSON تنظیمات تعریف می‌شود و با تغییر آن‌ها نیازی به migration نیست.
+// ---------------------------------------------------------------
+model User {
+  id          String  @id @default(uuid())
+  authId      String  @unique // شناسه‌ی کاربر در Supabase Auth
+  email       String  @unique
+  displayName String?
+  timezone    String  @default("Asia/Tehran")
+
+  // احراز هویت خودمدیریت (Auth.js Credentials)، نه Supabase.
+  // هش bcrypt با cost=12؛ هرگز رمز اصلی ذخیره نشود.
+  passwordHash String
+
+  personaId         String? // مثلاً "focused_structured"
+  profileSource     String  @default("questionnaire") // بعداً: "ml_cluster"
+  onboardingAnswers Json? // پاسخ‌های خام پرسشنامه (برای تحلیل بعدی)
+
+  consentBehaviorLog DateTime? // زمان رضایت به ثبت رفتار
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  tasks  Task[]
+  events Event[]
+
+  @@index([personaId])
+}
+
+// ---------------------------------------------------------------
+// Tasks
+// زمان‌ها همه DateTime هستند، نه boolean، چون ساعت دقیق برای خوشه‌بندی لازم است.
+// ---------------------------------------------------------------
+model Task {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  status      TaskStatus @default(PENDING)
+
+  deadline     DateTime?
+  scheduledFor DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  postponedCount Int @default(0)
+
+  // زیرتسک‌ها: یک تسک والد می‌تواند چند فرزند داشته باشد
+  parentTaskId String?
+  parent       Task?   @relation("SubTasks", fields: [parentTaskId], references: [id], onDelete: Cascade)
+  subTasks     Task[]  @relation("SubTasks")
+
+  // شکستن خودکار (AI) یا دستی توسط کاربر
+  createdByBreakdown Boolean @default(false)
+
+  @@index([userId, status])
+  @@index([userId, scheduledFor])
+  @@index([parentTaskId])
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+// ---------------------------------------------------------------
+// Events (Activity Log): مهم‌ترین جدول
+// فقط اضافه می‌شود (append-only): هرگز update یا delete نکن.
+// هر سیگنال جدید فقط داخل metadata می‌رود، بدون تغییر schema.
+// ---------------------------------------------------------------
+model Event {
+  id     BigInt @id @default(autoincrement())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  eventType String // task_completed, task_postponed, task_broken_down,
+  // notification_opened, notification_ignored, app_opened, ...
+  taskId    String? // اختیاری، برای کوئری‌های راحت‌تر (بدون FK تا لاگ با حذف تسک از بین نرود)
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  @@index([userId, timestamp])
+  @@index([eventType, timestamp])
+  @@index([taskId])
 }
