@@ -1,60 +1,55 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { SignOutButton } from "./sign-out-button";
+import { prisma } from "@/lib/prisma";
+import { signOutAction } from "@/lib/actions/auth";
+import { readPersonas } from "@/lib/personas";
 
 export const metadata = { title: "داشبورد | برنامه‌ریز" };
 
+/**
+ * در این مرحله فقط اسکلت لازم است تا مسیر کاربر قابل تست باشد. محتوای واقعی
+ * داشبورد در مرحلهٔ ۶ (داشبورد هفتگی) ساخته می‌شود.
+ */
 export default async function DashboardPage() {
-  // این صفحه با auth() داینامیک می‌شود و در هر درخواست دوباره کوکی
-  // بررسی می‌شود، پس محافظت واقعی است و نه فقط پنهان‌کردن لینک.
   const session = await auth();
-  if (!session?.user) redirect("/login");
+  if (!session?.user?.email) redirect("/login");
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true, displayName: true, personaId: true },
+  });
+
+  const persona = (await readPersonas()).find((p) => p.id === user?.personaId);
 
   return (
-    <main className="flex flex-1 flex-col gap-6 px-4 py-10">
-      <div className="mx-auto w-full max-w-2xl">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-              داشبورد
-            </h1>
-            <p className="mt-1 text-sm text-zinc-500">
-              خوش آمدید{session.user.name ? `، ${session.user.name}` : ""}.
-            </p>
-          </div>
-          <SignOutButton />
-        </div>
+    <main className="flex flex-1 flex-col px-4 py-10">
+      <div className="mx-auto w-full max-w-sm">
+        <h1 className="text-xl font-bold">
+          داشبورد
+        </h1>
+        <p className="mt-1 text-sm text-muted">
+          خوش آمدید{user?.displayName ? `، ${user.displayName}` : ""}.
+        </p>
 
-        <dl className="mt-6 divide-y divide-zinc-200 rounded-md border border-zinc-200 text-sm dark:divide-zinc-800 dark:border-zinc-800">
-          <div className="flex justify-between gap-4 p-3">
-            <dt className="text-zinc-500">نام کاربری</dt>
-            <dd dir="ltr" className="font-mono">
-              {session.user.name ?? "—"}
-            </dd>
+        <dl className="mt-6 divide-y divide-line rounded-2xl bg-surface text-sm">
+          <div className="flex items-center justify-between gap-3 p-4">
+            <dt className="text-muted">گروه شخصیتی</dt>
+            <dd>{persona?.name ?? "—"}</dd>
           </div>
-          <div className="flex justify-between gap-4 p-3">
-            <dt className="text-zinc-500">ایمیل</dt>
-            <dd dir="ltr" className="font-mono">
-              {session.user.email}
-            </dd>
-          </div>
-          <div className="flex justify-between gap-4 p-3">
-            <dt className="text-zinc-500">شناسه</dt>
-            <dd dir="ltr" className="font-mono text-xs">
-              {session.user.id}
-            </dd>
-          </div>
-          <div className="flex justify-between gap-4 p-3">
-            <dt className="text-zinc-500">انقضای نشست</dt>
-            <dd dir="ltr" className="font-mono text-xs">
-              {session.expires}
-            </dd>
+          <div className="flex items-center justify-between gap-3 p-4">
+            <dt className="text-muted">لحن پیام‌ها</dt>
+            <dd>{persona?.toneNote ?? "—"}</dd>
           </div>
         </dl>
 
-        <p className="mt-6 text-sm text-zinc-500">
-          این صفحه فقط نمایشی است تا مطمئن شویم نشست و JWT درست کار می‌کنند.
-        </p>
+        <form action={signOutAction} className="mt-6">
+          <button
+            type="submit"
+            className="w-full rounded-xl border border-line px-3 py-3 text-sm transition hover:bg-raised"
+          >
+            خروج از حساب
+          </button>
+        </form>
       </div>
     </main>
   );

@@ -3,23 +3,40 @@ import { compare, hash } from "bcryptjs";
 export const BCRYPT_ROUNDS = 12;
 
 /**
- * هش bcrypt با cost برابر ۱۲ از یک رمز تصادفی. هیچ‌وقت با رمز واقعی
- * برابر نیست، فقط باعث می‌شود هنگام نبودِ کاربر هم یک compare پرهزینه
- * اجرا شود تا از روی زمان پاسخ نتوان فهمید ایمیل ثبت شده است یا نه.
+ * bcrypt بیشتر از ۷۲ بایت ورودی را بی‌صدا برش می‌دهد. این یعنی دو رمز که فقط
+ * در چند کاراکتر آخر فرق دارند یک هش می‌شدند و کسی می‌توانست با یک رمزِ
+ * ۷۲ بایتی به حسابی که رمز بلندتری دارد وارد شود. برای همین ورودی را قبل از
+ * هش کردن برش می‌دهیم، ولی بی‌سروصدا نه: تابع زیر اگر ورودی بلندتر باشد خطا
+ * می‌دهد تا لایهٔ بالاتر مجبور شود کاربر را مطلع کند.
+ */
+export const BCRYPT_MAX_BYTES = 72;
+
+export function byteLength(value: string): number {
+  return Buffer.byteLength(value, "utf8");
+}
+
+/**
+ * هش bcrypt با cost=12. کاربر در ثبت‌نام حدود نیم ثانیه معطلی می‌بیند که در
+ * عوض ذخیرهٔ هش گران می‌شود.
+ *
+ * cost قابل تنظیم است چون تست‌ها با cost پایین اجرا می‌شوند تا کند نشوند.
+ * در مسیر واقعی همیشه BCRYPT_ROUNDS استفاده می‌شود.
+ */
+export function hashPassword(
+  password: string,
+  rounds: number = BCRYPT_ROUNDS,
+): Promise<string> {
+  return hash(password, rounds);
+}
+
+/**
+ * یک هش ساختگی که هیچ رمزی به آن نمی‌خورد. وقتی کاربر پیدا نشد، compare با
+ * این هش اجرا می‌شود تا زمان پاسخ تقریباً ثابت بماند؛ وگرنه یک کاربر غایب
+ * سریع‌تر جواب می‌گیرد و از تفاوت زمان می‌شود فهمید ایمیل ثبت شده یا نه.
  */
 const DUMMY_HASH =
   "$2b$12$V8CqgqLynH/65ddjjrucfuGmYuVV6sEdP03nP/qNJVof1A0uIPRzC";
 
-export function hashPassword(password: string): Promise<string> {
-  return hash(password, BCRYPT_ROUNDS);
-}
-
-/**
- * مقایسه‌ی رمز با هش ذخیره‌شده. اگر کاربری وجود نداشته باشد، باز هم
- * compare انجام می‌شود (با DUMMY_HASH) تا زمان پاسخ یکنواخت بماند.
- * در هر دو حالت فقط یک bool برمی‌گردد تا «کاربر نیست» و «رمز غلط است»
- * از بیرون قابل تفکیک نباشد.
- */
 export async function verifyPassword(
   password: string,
   passwordHash: string | null | undefined,

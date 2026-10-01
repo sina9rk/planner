@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>طراحی اپ مشاور کارهای روزانه - نسخه ۲</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0E13; --surface:#151A22; --raised:#1D2430; --line:#2A3241;
+  --text:#E8ECF2; --muted:#8B95A7; --accent:#7DD3C0; --ink:#06211B; --warn:#F2B872;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font-family:"Vazirmatn",Tahoma,system-ui,sans-serif;line-height:1.7;padding:24px 16px}
+h1{font-size:20px;text-align:center}
+.sub{color:var(--muted);text-align:center;font-size:13px;margin:4px 0 26px}
+.row{display:flex;flex-wrap:wrap;gap:26px;justify-content:center}
+.col{width:270px;max-width:100%}
+.cap{color:var(--muted);font-size:12px;text-align:center;margin-bottom:10px}
+.phone{background:var(--bg);border:1px solid var(--line);border-radius:30px;padding:20px 16px;height:560px;display:flex;flex-direction:column;overflow:hidden}
+.top{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin-bottom:16px}
+.bar{height:4px;background:var(--raised);border-radius:4px;flex:1;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--ink);display:grid;place-items:center;font-weight:700;flex:none}
+.who{font-size:13px;color:var(--text)}.who small{display:block;color:var(--muted);font-size:11px}
+.bub{background:var(--surface);border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:15px;margin-bottom:14px}
+.opt{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:9px;font-size:13.5px}
+.opt.on{border-color:var(--accent);background:#12211F}
+.btn{margin-top:auto;background:var(--accent);color:var(--ink);border-radius:14px;padding:12px;font-weight:700;font-size:14px;text-align:center}
+.btn.g{background:var(--raised);color:var(--text)}
+.big{font-size:12px;color:var(--accent);margin-bottom:2px}
+.h{font-size:20px;font-weight:700;margin-bottom:8px}
+.p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;font-size:13px}
+.box b{display:block;font-size:14px;margin-bottom:2px}
+.pill{display:inline-block;background:var(--raised);border-radius:20px;padding:2px 10px;font-size:11px;color:var(--muted);margin:2px 0 0 4px}
+.goal{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-bottom:10px}
+.goal b{font-size:14px}.goal .m{font-size:12px;color:var(--muted);margin:2px 0 8px}
+.goal .bar{flex:none;width:100%}
+.slot{font-size:11px;color:var(--warn);margin-top:6px}
+.lock{background:linear-gradient(#141a24,#0B0E13);border-radius:22px;padding:24px 14px;flex:1}
+.time{text-align:center;font-size:44px;font-weight:500;direction:ltr;margin:20px 0 26px}
+.ntf{background:rgba(29,36,48,.92);border:1px solid var(--line);border-radius:16px;padding:11px 13px;margin-bottom:10px;font-size:13px}
+.ntf small{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:2px}
+.ntf b{display:block}
+.ax{margin-bottom:11px;font-size:12px}.ax div{display:flex;justify-content:space-between;color:var(--muted);margin-bottom:3px}
+.ax .bar{height:5px}
+.st{display:flex;gap:8px;margin-bottom:12px}.st .box{flex:1;text-align:center;margin:0;padding:10px 4px}.st b{font-size:18px;color:var(--accent)}
+.li{display:flex;justify-content:space-between;padding:10px 2px;border-bottom:1px solid var(--line);font-size:13px}.li span:last-child{color:var(--muted)}
+.note{max-width:900px;margin:28px auto 0;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<h1>مسیر اصلی اپ</h1>
+<p class="sub">سؤال‌های لیلا ← گروه شخصیتی ← اهداف ← نوتیف انگیزشی ← پروفایل</p>
+
+<div class="row">
+  <div class="col"><div class="cap">۱. سؤال‌های لیلا</div>
+    <div class="phone">
+      <div class="top"><span>۳ از ۸</span><div class="bar"><i style="width:37%"></i></div></div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px"><div class="av">ل</div><div class="who">لیلا<small>مشاور برنامه‌ریزی</small></div></div>
+      <div class="bub">وقتی کار بزرگی جلوی توست، معمولاً چه‌کار می‌کنی؟</div>
+      <div class="opt">اول آن را به قطعه‌های کوچک می‌شکنم</div>
+      <div class="opt on">مستقیم شروع می‌کنم و در مسیر جلو می‌روم</div>
+      <div class="opt">صبر می‌کنم تا فشار ددلاین بیاید</div>
+      <div class="opt">بستگی به انرژی آن روز دارد</div>
+      <div class="btn">بعدی</div>
+    </div>
+  </div>
+
+  <div class="col"><div class="cap">۲. نتیجه: تو در این گروه هستی</div>
+    <div class="phone">
+      <div class="big">نتیجه‌ی لیلا</div>
+      <div class="h">تک‌تمرکز و منظم</div>
+      <div class="p">بهترین کارت را وقتی می‌کنی که یک کار در یک زمان داشته باشی و ساختار روزت ثابت باشد.</div>
+      <div class="box"><b>برنامه‌ی تو</b>بلوک‌های تمرکز ۴۵ دقیقه‌ای، بدون نوتیف اضافه</div>
+      <div class="box"><b>لحن پیام‌ها</b>کوتاه، مشخص و بدون قضاوت</div>
+      <div class="box"><b>وقتی از برنامه جا افتادی</b>ریست ساده، بدون شرم</div>
+      <div class="p" style="margin-top:2px">هر وقت خواستی می‌توانی این را از پروفایل عوض کنی.</div>
+      <div class="btn">بریم سراغ اهدافم</div>
+    </div>
+  </div>
+
+  <div class="col"><div class="cap">۳. اهداف</div>
+    <div class="phone">
+      <div class="h">اهداف من</div>
+      <div class="p">اپ برای هر هدف، طبق گروه تو زمان و مدت پیشنهاد می‌دهد.</div>
+      <div class="goal"><b>یادگیری زبان</b><div class="m">روزی ۳۰ دقیقه · ۴ روز از ۷ روز</div><div class="bar"><i style="width:57%"></i></div><div class="slot">زمان پیشنهادی: ۷:۳۰ صبح (اوج تمرکز تو)</div></div>
+      <div class="goal"><b>تمرین ویولن</b><div class="m">روزی ۲۰ دقیقه · ۲ روز از ۷ روز</div><div class="bar"><i style="width:28%"></i></div><div class="slot">زمان پیشنهادی: ۱۸:۰۰ (بعد از کار)</div></div>
+      <div class="box" style="border-style:dashed;text-align:center;color:var(--muted)">+ هدف جدید</div>
+      <div class="btn g">ویرایش برنامه</div>
+    </div>
+  </div>
+
+  <div class="col"><div class="cap">۴. نوتیف انگیزشی</div>
+    <div class="phone">
+      <div class="lock">
+        <div class="time">۱۸:۰۰</div>
+        <div class="ntf"><small><span>مشاور</span><span>الان</span></small><b>وقت ویولن است</b>بلند شو. فقط ۲۰ دقیقه، بعد راحتی.</div>
+        <div class="ntf"><small><span>مشاور</span><span>۵ دقیقه پیش</span></small><b>دیروز جا افتاد، مهم نیست</b>امروز از همین‌جا ادامه می‌دهیم.</div>
+      </div>
+      <p class="p" style="margin:10px 0 0;text-align:center">جمله‌ها از یک فایل آماده می‌آیند و لحنشان به گروه تو بستگی دارد.</p>
+    </div>
+  </div>
+
+  <div class="col"><div class="cap">۵. پروفایل</div>
+    <div class="phone">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px"><div class="av" style="width:44px;height:44px">س</div><div class="who">سینا<small>گروه: تک‌تمرکز و منظم</small></div></div>
+      <div class="st"><div class="box"><b>۱۲</b>روز فعال</div><div class="box"><b>۷۸٪</b>تکمیل</div></div>
+      <div class="ax"><div><span>تک‌تمرکز</span><span>چندتمرکز</span></div><div class="bar"><i style="width:22%"></i></div></div>
+      <div class="ax"><div><span>ساختارمند</span><span>خودجوش</span></div><div class="bar"><i style="width:30%"></i></div></div>
+      <div class="ax"><div><span>صبح‌کار</span><span>شب‌کار</span></div><div class="bar"><i style="width:18%"></i></div></div>
+      <div class="li"><span>ساعت نوتیف</span><span>۷:۳۰ و ۱۸:۰۰</span></div>
+      <div class="li"><span>لحن پیام‌ها</span><span>کوتاه و مشخص</span></div>
+      <div class="btn g">انجام دوباره‌ی سؤال‌ها</div>
+    </div>
+  </div>
+</div>
+
+<p class="note">اپ با گذشت زمان گروه تو را از رفتار واقعی‌ات اصلاح می‌کند و در پروفایل نشان می‌دهد، پس این نوار‌ها ثابت نیستند.</p>
+</body>
+</html>

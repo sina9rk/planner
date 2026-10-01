@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>طراحی اپ - اهداف، جزئیات و چت AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0E13; --surface:#151A22; --raised:#1D2430; --line:#2A3241;
+  --text:#E8ECF2; --muted:#8B95A7; --accent:#7DD3C0; --ink:#06211B; --warn:#F2B872;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0}
+body{background:#05070A;color:var(--text);font-family:"Vazirmatn",Tahoma,system-ui,sans-serif;line-height:1.7;padding:24px 16px}
+h1{font-size:20px;text-align:center}
+.sub{color:var(--muted);text-align:center;font-size:13px;margin:4px 0 26px}
+.row{display:flex;flex-wrap:wrap;gap:26px;justify-content:center}
+.col{width:290px;max-width:100%}
+.cap{color:var(--muted);font-size:12px;text-align:center;margin-bottom:10px}
+.phone{background:var(--bg);border:1px solid var(--line);border-radius:30px;height:600px;display:flex;flex-direction:column;overflow:hidden}
+.pad{padding:18px 16px;display:flex;flex-direction:column;height:100%}
+.h{font-size:18px;font-weight:700}
+.p{font-size:12.5px;color:var(--muted);margin:3px 0 14px}
+.back{font-size:12px;color:var(--muted);margin-bottom:10px}
+
+/* goals list */
+.gitem{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-bottom:10px}
+.gtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.gtop b{font-size:14.5px}
+.gtop span{font-size:11px;color:var(--muted)}
+.gbar{height:6px;background:var(--raised);border-radius:4px;overflow:hidden;margin-bottom:6px}
+.gbar i{display:block;height:100%;background:var(--accent)}
+.gmeta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.gmeta b{color:var(--accent);font-weight:500}
+.fab{position:absolute;bottom:20px;left:20px;width:46px;height:46px;border-radius:50%;background:var(--accent);color:var(--ink);display:grid;place-items:center;font-size:22px;font-weight:700}
+.wrap{position:relative;flex:1}
+
+/* goal detail */
+.stats{display:flex;gap:8px;margin-bottom:16px}
+.stat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-size:17px;color:var(--accent)}
+.stat span{font-size:10.5px;color:var(--muted)}
+.lbl{font-size:12px;color:var(--muted);margin-bottom:8px}
+.addbox{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:12px;margin-bottom:16px}
+.addrow{display:flex;gap:8px;margin-bottom:8px}
+.inp{background:var(--raised);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;color:var(--text);flex:1}
+.inp.sm{flex:none;width:70px;text-align:center}
+.addbtn{background:var(--accent);color:var(--ink);border-radius:10px;padding:9px;text-align:center;font-size:12.5px;font-weight:700}
+.logs{flex:1;overflow:hidden}
+.log{display:flex;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px;flex:none}
+.log b{font-size:13px;display:block}
+.log span{font-size:11px;color:var(--muted)}
+
+/* AI chat */
+.chatbar{display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.av{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--ink);display:grid;place-items:center;font-weight:700}
+.who b{display:block;font-size:14px}
+.who span{font-size:11px;color:var(--muted)}
+.msgs{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.m{max-width:80%;padding:10px 13px;border-radius:14px;font-size:13px}
+.m.ai{background:var(--surface);border:1px solid var(--line);align-self:flex-start;border-bottom-right-radius:4px}
+.m.me{background:var(--accent);color:var(--ink);align-self:flex-end;border-bottom-left-radius:4px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.chip{font-size:10.5px;background:var(--raised);border-radius:20px;padding:4px 9px;color:var(--muted)}
+.input{display:flex;gap:8px;margin-top:12px}
+.input .inp{border-radius:22px;padding:11px 15px}
+.send{width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--ink);display:grid;place-items:center;flex:none}
+.note{max-width:900px;margin:30px auto 0;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<h1>اهداف، جزئیات و چت مشاور</h1>
+<p class="sub">چت فقط ظاهری است؛ اتصال واقعی به AI فاز بعد انجام می‌شود</p>
+
+<div class="row">
+  <div class="col"><div class="cap">۱. لیست اهداف</div>
+    <div class="phone"><div class="pad wrap">
+      <div class="h">اهداف من</div>
+      <div class="p">۲ هدف فعال</div>
+
+      <div class="gitem">
+        <div class="gtop"><b>یادگیری زبان</b><span>۴ از ۷ روز</span></div>
+        <div class="gbar"><i style="width:57%"></i></div>
+        <div class="gmeta"><span>این هفته: <b>۳ ساعت ۱۰ دقیقه</b></span><span>هدف: ۵ ساعت</span></div>
+      </div>
+
+      <div class="gitem">
+        <div class="gtop"><b>تمرین ویولن</b><span>۲ از ۷ روز</span></div>
+        <div class="gbar"><i style="width:28%"></i></div>
+        <div class="gmeta"><span>این هفته: <b>۴۰ دقیقه</b></span><span>هدف: ۲ ساعت ۲۰</span></div>
+      </div>
+
+      <div class="gitem" style="opacity:.55">
+        <div class="gtop"><b>مطالعه‌ی کتاب</b><span>متوقف</span></div>
+        <div class="gbar"><i style="width:10%"></i></div>
+        <div class="gmeta"><span>این هفته: <b>۱۰ دقیقه</b></span><span>هدف: ۳ ساعت</span></div>
+      </div>
+
+      <div class="fab">+</div>
+    </div></div>
+  </div>
+
+  <div class="col"><div class="cap">۲. جزئیات هدف</div>
+    <div class="phone"><div class="pad">
+      <div class="back">← بازگشت</div>
+      <div class="h">یادگیری زبان</div>
+      <div class="p">هدف هفتگی: ۵ ساعت · یادآوری ساعت ۷:۳۰</div>
+
+      <div class="stats">
+        <div class="stat"><b>۳:۱۰</b><span>این هفته</span></div>
+        <div class="stat"><b>۱۲</b><span>روز فعال</span></div>
+        <div class="stat"><b>۶۲٪</b><span>از هدف</span></div>
+      </div>
+
+      <div class="lbl">ثبت کار امروز</div>
+      <div class="addbox">
+        <div class="addrow">
+          <div class="inp sm">۲ ساعت</div>
+          <div class="inp">چی کار کردی؟ مثلاً فصل سوم گرامر</div>
+        </div>
+        <div class="addbtn">ثبت کن</div>
+      </div>
+
+      <div class="lbl">تاریخچه</div>
+      <div class="logs">
+        <div class="log"><div class="dot"></div><div><b>۲ ساعت</b><span>فصل سوم گرامر، زمان حال کامل — امروز</span></div></div>
+        <div class="log"><div class="dot"></div><div><b>۴۵ دقیقه</b><span>مکالمه با اپلیکیشن — دیروز</span></div></div>
+        <div class="log"><div class="dot"></div><div><b>۳۰ دقیقه</b><span>مرور لغات — ۲ روز پیش</span></div></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="col"><div class="cap">۳. چت با مشاور (فقط ظاهر)</div>
+    <div class="phone"><div class="pad">
+      <div class="chatbar">
+        <div class="av">AI</div>
+        <div class="who"><b>مشاور برنامه‌ریزی</b><span>بر اساس گروه شخصیتی تو</span></div>
+      </div>
+      <div class="msgs">
+        <div class="m ai">سلام سینا! دیدم این هفته روی «یادگیری زبان» ۳ ساعت کار کردی. چون تک‌تمرکزی هستی، پیشنهاد می‌کنم صبح‌ها ساعت ۷:۳۰، قبل از شلوغی ذهنت، ۴۵ دقیقه‌ی پیوسته بخوانی.</div>
+        <div class="m me">باشه، ولی ویولن رو کی تمرین کنم؟</div>
+        <div class="m ai">عصرها بعد از کار بهتره، چون انرژی ذهنی لازم نداره و می‌تونه استراحت حساب بشه.
+          <div class="chips"><span class="chip">تغییر ساعت یادآوری</span><span class="chip">برنامه‌ی این هفته</span></div>
+        </div>
+      </div>
+      <div class="input"><div class="inp">پیام بنویس…</div><div class="send">↑</div></div>
+    </div></div>
+  </div>
+</div>
+
+<p class="note">در فاز فعلی این صفحه فقط طراحی است و پیام‌ها ثابت/نمایشی هستند. وقتی AI واقعی وصل شد، همین قالب نگه داشته می‌شود و فقط پاسخ‌ها واقعی می‌شوند.</p>
+</body>
+</html>

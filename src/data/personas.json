@@ -1,0 +1,244 @@
+{
+  "$comment": "پرسوناها در فایل پیکربندی می‌مانند نه در دیتابیس، چون محتوایشان بعد از تحلیل رفتار واقعی تغییر می‌کند. آیدی‌ها ثابت‌اند: اگر آیدی عوض شود، personaId ذخیره‌شدهٔ کاربران قبلی به هیچ گزینه‌ای نگاشت نمی‌شود. toneStyle تعیین می‌کند جمله‌های لیلا و نوتیف چه لحنی داشته باشند: پرسونای حساس به شرم و فشار باید gentle بگیرد.",
+  "personas": [
+    {
+      "id": "focused_structured",
+      "name": "تک‌تمرکز و منظم",
+      "toneStyle": "gentle",
+      "tagline": "بهترین کارت را وقتی می‌کنی که یک کار در یک زمان داشته باشی و ساختار روزت ثابت باشد.",
+      "plan": "بلوک‌های تمرکز ۴۵ دقیقه‌ای، بدون نوتیف اضافه",
+      "toneNote": "کوتاه، مشخص و بدون قضاوت",
+      "missedDayPolicy": "ریست ساده، بدون شرم",
+      "suggestedBlockMinutes": 45,
+      "suggestedReminderTime": "07:30",
+      "traitAxis": { "focus": 0.85, "structure": 0.8, "pressureDriven": 0.2 }
+    },
+    {
+      "id": "steady_persistent",
+      "name": "پیوسته و باثبات",
+      "toneStyle": "gentle",
+      "tagline": "کار را رها نمی‌کنی؛ پیوستگی برایت از سرعت مهم‌تر است.",
+      "plan": "قدم‌های کوچک روزانه، یادآوری در ساعت‌های ثابت",
+      "toneNote": "آرام و بی‌اصرار؛ روی انجام دوباره تأکید می‌کند نه جبرانِ عقب‌افتاده",
+      "missedDayPolicy": "از جلسهٔ کوچک امروز شروع کن، نه از جبران دیروز",
+      "suggestedBlockMinutes": 20,
+      "suggestedReminderTime": "18:00",
+      "traitAxis": { "focus": 0.55, "structure": 0.6, "pressureDriven": 0.3 }
+    },
+    {
+      "id": "explorer_flexible",
+      "name": "کنجکاو و منعطف",
+      "toneStyle": "gentle",
+      "tagline": "با فضای باز و بدون قالب از پیش تعیین‌شده بهتر کار می‌کنی.",
+      "plan": "جلسه‌های کوتاه و اختیاری، بدون برنامهٔ سفت‌وسخت",
+      "toneNote": "کنجکاو و بازی‌گونه؛ گزینه می‌دهد به‌جای دستور",
+      "missedDayPolicy": "هیچ اتفاقی نیفتاده، فقط از سرگرمی جا افتادی",
+      "suggestedBlockMinutes": 15,
+      "suggestedReminderTime": "11:00",
+      "traitAxis": { "focus": 0.35, "structure": 0.2, "pressureDriven": 0.25 }
+    },
+    {
+      "id": "social_guided",
+      "name": "اجتماعی و همراه",
+      "toneStyle": "gentle",
+      "tagline": "با همراهی دیگران انرژی می‌گیری؛ کار مشترک انگیزه‌ات می‌کند.",
+      "plan": "جلسه‌های مشترک، تمرکز روی کاری که کسی منتظرش است",
+      "toneNote": "گرم و اهلِ همدلی؛ لحن شرمنده‌کننده ممنوع",
+      "missedDayPolicy": "بگو کجا بودی، باهم جبران می‌کنیم",
+      "suggestedBlockMinutes": 40,
+      "suggestedReminderTime": "17:00",
+      "traitAxis": { "focus": 0.5, "structure": 0.45, "pressureDriven": 0.4 }
+    },
+    {
+      "id": "deadline_driven",
+      "name": "نتیجه‌محور و جاه‌طلب",
+      "toneStyle": "commander",
+      "tagline": "با ددلاین و نتیجه روشن روشن می‌شوی؛ بدون فشار، حرکت نمی‌کنی.",
+      "plan": "بلوک‌های فشرده، ددلاین کوتاه و واضح",
+      "toneNote": "مستقیم و دستوری؛ بدون تعارف ولی بدون توهین",
+      "missedDayPolicy": "همین الان شروع کن؛ زمان کمتری از آنچه فکر می‌کنی داری",
+      "suggestedBlockMinutes": 50,
+      "suggestedReminderTime": "09:00",
+      "traitAxis": { "focus": 0.7, "structure": 0.75, "pressureDriven": 0.9 }
+    },
+    {
+      "id": "metrics_driven",
+      "name": "سنجش‌محور و بهره‌ور",
+      "toneStyle": "commander",
+      "tagline": "با عدد جلو می‌روی؛ اگر نداشته باشی نمی‌دانی داری بهتر می‌شوی یا نه.",
+      "plan": "هدف‌های عددی هفتگی، مرور کوتاه آخر هفته",
+      "toneNote": "مستقیم و داده‌محور؛ عدد می‌آورد نه احساس",
+      "missedDayPolicy": "عدد این هفته پایین است؛ بیا امروز جبران کنیم",
+      "suggestedBlockMinutes": 45,
+      "suggestedReminderTime": "20:00",
+      "traitAxis": { "focus": 0.65, "structure": 0.85, "pressureDriven": 0.8 }
+    }
+  ],
+  "$questionsComment": "هر گزینه به هر پرسونا یک وزن می‌دهد. امتیاز نهایی جمع سادهٔ همین وزن‌هاست و پرسونای برنده بالاترین امتیاز را می‌گیرد. عمداً rule-based است، نه ML؛ بریف ML را برای فاز بعد گذاشته.",
+  "questions": [
+    {
+      "id": "big_task",
+      "order": 1,
+      "prompt": "وقتی کار بزرگی جلوی توست، معمولاً چه‌کار می‌کنی؟",
+      "options": [
+        {
+          "label": "اول آن را به قطعه‌های کوچک می‌شکنم",
+          "weights": { "focused_structured": 3, "steady_persistent": 2, "explorer_flexible": 1, "social_guided": 1, "deadline_driven": 1, "metrics_driven": 3 }
+        },
+        {
+          "label": "مستقیم شروع می‌کنم و در مسیر جلو می‌روم",
+          "weights": { "focused_structured": 1, "steady_persistent": 2, "explorer_flexible": 3, "social_guided": 2, "deadline_driven": 3, "metrics_driven": 1 }
+        },
+        {
+          "label": "صبر می‌کنم تا فشار ددلاین بیاید",
+          "weights": { "focused_structured": 1, "steady_persistent": 1, "explorer_flexible": 2, "social_guided": 1, "deadline_driven": 4, "metrics_driven": 2 }
+        },
+        {
+          "label": "بستگی به انرژی آن روز دارد",
+          "weights": { "focused_structured": 1, "steady_persistent": 1, "explorer_flexible": 4, "social_guided": 2, "deadline_driven": 0, "metrics_driven": 0 }
+        }
+      ]
+    },
+    {
+      "id": "structure_vs_spontaneity",
+      "order": 2,
+      "prompt": "برنامهٔ فردا را چطور ترجیح می‌دهی؟",
+      "options": [
+        {
+          "label": "از شب قبل کامل مشخص باشد",
+          "weights": { "focused_structured": 4, "steady_persistent": 3, "explorer_flexible": 0, "social_guided": 2, "deadline_driven": 2, "metrics_driven": 4 }
+        },
+        {
+          "label": "چارچوب کلی باشد، جزئیات را همان روز ببینم",
+          "weights": { "focused_structured": 1, "steady_persistent": 2, "explorer_flexible": 3, "social_guided": 3, "deadline_driven": 1, "metrics_driven": 2 }
+        },
+        {
+          "label": "اصلاً برنامه‌ریزی نکنم، هرچه پیش آمد",
+          "weights": { "focused_structured": 0, "steady_persistent": 1, "explorer_flexible": 4, "social_guided": 1, "deadline_driven": 0, "metrics_driven": 0 }
+        }
+      ]
+    },
+    {
+      "id": "pressure_response",
+      "order": 3,
+      "prompt": "وقتی زمان کم می‌آوری، کدام جمله به تو نزدیک‌تر است؟",
+      "options": [
+        {
+          "label": "«فشار کمکم می‌کند سریع‌تر باشم»",
+          "weights": { "focused_structured": 1, "steady_persistent": 1, "explorer_flexible": 1, "social_guided": 1, "deadline_driven": 4, "metrics_driven": 2 }
+        },
+        {
+          "label": "«وقتی فشار زیاد می‌شود، ذهنم قفل می‌کند»",
+          "weights": { "focused_structured": 2, "steady_persistent": 3, "explorer_flexible": 2, "social_guided": 3, "deadline_driven": 0, "metrics_driven": 1 }
+        },
+        {
+          "label": "«فشار برام بی‌تفاوت است، فقط باید شروع کنم»",
+          "weights": { "focused_structured": 2, "steady_persistent": 3, "explorer_flexible": 3, "social_guided": 1, "deadline_driven": 1, "metrics_driven": 3 }
+        }
+      ]
+    },
+    {
+      "id": "accountability",
+      "order": 4,
+      "prompt": "اگر کسی هر روز پیگیرت باشد، حس چه‌کار می‌کنی؟",
+      "options": [
+        {
+          "label": "خیلی خوبم، انگیزه می‌گیرم",
+          "weights": { "focused_structured": 1, "steady_persistent": 1, "explorer_flexible": 2, "social_guided": 4, "deadline_driven": 2, "metrics_driven": 2 }
+        },
+        {
+          "label": "مزاحمم می‌شود، تنها بهتر کار می‌کنم",
+          "weights": { "focused_structured": 3, "steady_persistent": 2, "explorer_flexible": 3, "social_guided": 0, "deadline_driven": 1, "metrics_driven": 1 }
+        },
+        {
+          "label": "معمولاً جواب نمی‌دهم و بعد از دو روز ول می‌کنم",
+          "weights": { "focused_structured": 1, "steady_persistent": 1, "explorer_flexible": 2, "social_guided": 1, "deadline_driven": 0, "metrics_driven": 1 }
+        }
+      ]
+    },
+    {
+      "id": "best_time",
+      "order": 5,
+      "prompt": "بهترین زمان تمرکز تو کدام است؟",
+      "options": [
+        {
+          "label": "اول صبح، قبل از هر چیز",
+          "weights": { "focused_structured": 4, "steady_persistent": 3, "explorer_flexible": 1, "social_guided": 2, "deadline_driven": 2, "metrics_driven": 3 }
+        },
+        {
+          "label": "شب، وقتی همه‌چیز ساکت است",
+          "weights": { "focused_structured": 2, "steady_persistent": 2, "explorer_flexible": 3, "social_guided": 1, "deadline_driven": 2, "metrics_driven": 2 }
+        },
+        {
+          "label": "هر وقت فشار کار زیاد شد",
+          "weights": { "focused_structured": 0, "steady_persistent": 1, "explorer_flexible": 1, "social_guided": 1, "deadline_driven": 4, "metrics_driven": 2 }
+        },
+        {
+          "label": "بستگی به روز دارد، باید منعطف باشم",
+          "weights": { "focused_structured": 1, "steady_persistent": 1, "explorer_flexible": 4, "social_guided": 2, "deadline_driven": 0, "metrics_driven": 0 }
+        }
+      ]
+    },
+    {
+      "id": "missed_day",
+      "order": 6,
+      "prompt": "یک روز کامل از دستت رفت. فردا چه می‌کنی؟",
+      "options": [
+        {
+          "label": "بیشتر کار می‌کنم تا جبران شود",
+          "weights": { "focused_structured": 1, "steady_persistent": 1, "explorer_flexible": 1, "social_guided": 1, "deadline_driven": 4, "metrics_driven": 4 }
+        },
+        {
+          "label": "مثل روزهای قبل ادامه می‌دهم، انگار هیچ نشده",
+          "weights": { "focused_structured": 3, "steady_persistent": 4, "explorer_flexible": 3, "social_guided": 2, "deadline_driven": 1, "metrics_driven": 2 }
+        },
+        {
+          "label": "کلاً رها می‌کنم، به این کار علاقه ندارم",
+          "weights": { "focused_structured": 1, "steady_persistent": 0, "explorer_flexible": 2, "social_guided": 0, "deadline_driven": 0, "metrics_driven": 0 }
+        }
+      ]
+    },
+    {
+      "id": "session_length",
+      "order": 7,
+      "prompt": "یک جلسهٔ کاری خوب برای تو چقدر طول می‌کشد؟",
+      "options": [
+        {
+          "label": "حدود ۱۵ تا ۲۵ دقیقه",
+          "weights": { "focused_structured": 1, "steady_persistent": 3, "explorer_flexible": 4, "social_guided": 2, "deadline_driven": 1, "metrics_driven": 1 }
+        },
+        {
+          "label": "حدود ۴۵ تا ۵۰ دقیقه",
+          "weights": { "focused_structured": 4, "steady_persistent": 2, "explorer_flexible": 1, "social_guided": 2, "deadline_driven": 4, "metrics_driven": 4 }
+        },
+        {
+          "label": "هرچقدر طول بکشد، تا آخرش ادامه می‌دهم",
+          "weights": { "focused_structured": 2, "steady_persistent": 3, "explorer_flexible": 1, "social_guided": 1, "deadline_driven": 2, "metrics_driven": 2 }
+        }
+      ]
+    },
+    {
+      "id": "motivation",
+      "order": 8,
+      "prompt": "بیشتر وقتی ادامه می‌دهی که…",
+      "options": [
+        {
+          "label": "می‌دانم دقیقاً کجا ایستاده‌ام",
+          "weights": { "focused_structured": 4, "steady_persistent": 3, "explorer_flexible": 1, "social_guided": 1, "deadline_driven": 2, "metrics_driven": 3 }
+        },
+        {
+          "label": "کسی منتظر نتیجه‌ام است",
+          "weights": { "focused_structured": 1, "steady_persistent": 1, "explorer_flexible": 1, "social_guided": 4, "deadline_driven": 3, "metrics_driven": 3 }
+        },
+        {
+          "label": "خودم از کاری که دارم لذت می‌برم",
+          "weights": { "focused_structured": 1, "steady_persistent": 2, "explorer_flexible": 4, "social_guided": 2, "deadline_driven": 0, "metrics_driven": 1 }
+        },
+        {
+          "label": "بدون این‌ها انجامش نمی‌دهم",
+          "weights": { "focused_structured": 1, "steady_persistent": 1, "explorer_flexible": 0, "social_guided": 0, "deadline_driven": 4, "metrics_driven": 3 }
+        }
+      ]
+    }
+  ]
+}

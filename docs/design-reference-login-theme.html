@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>طراحی اپ - ورود و تم</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0E13; --surface:#151A22; --raised:#1D2430; --line:#2A3241;
+  --text:#E8ECF2; --muted:#8B95A7; --accent:#7DD3C0; --ink:#06211B; --warn:#F2B872;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+body{background:#05070A;color:var(--text);font-family:"Vazirmatn",Tahoma,system-ui,sans-serif;line-height:1.7;padding:24px 16px}
+h1{font-size:20px;text-align:center}
+.sub{color:var(--muted);text-align:center;font-size:13px;margin:4px 0 26px}
+.row{display:flex;flex-wrap:wrap;gap:26px;justify-content:center}
+.col{width:290px;max-width:100%}
+.cap{color:var(--muted);font-size:12px;text-align:center;margin-bottom:10px}
+.phone{background:var(--bg);border:1px solid var(--line);border-radius:30px;overflow:hidden;height:600px;display:flex;flex-direction:column}
+
+/* login */
+.wave-wrap{position:relative;background:linear-gradient(160deg,#111826,var(--bg));height:230px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.wave-wrap svg{position:absolute;bottom:-1px;right:0;width:100%}
+.logo{width:52px;height:52px;border-radius:16px;background:var(--accent);color:var(--ink);display:grid;place-items:center;font-weight:700;font-size:20px;margin-bottom:10px}
+.wtitle{font-size:19px;font-weight:700}
+.wsub{font-size:12px;color:var(--muted);margin-top:3px}
+.form{padding:22px 20px;display:flex;flex-direction:column;flex:1}
+.lbl{font-size:12.5px;color:var(--muted);margin-bottom:7px}
+.inp{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 13px;font-size:14px;color:var(--text);margin-bottom:16px}
+.inp.ph{color:var(--muted)}
+.btn{background:var(--accent);color:var(--ink);border-radius:13px;padding:13px;font-weight:700;font-size:14.5px;text-align:center;margin-bottom:16px}
+.link{text-align:center;font-size:12.5px;color:var(--muted)}
+.link b{color:var(--accent);font-weight:500}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px;margin:4px 0 16px}
+.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+.ghostbtn{border:1px solid var(--line);border-radius:12px;padding:11px;text-align:center;font-size:13px;color:var(--text);margin-bottom:10px}
+
+/* profile theme section */
+.pbody{padding:20px 18px;flex:1;overflow:hidden}
+.h{font-size:18px;font-weight:700;margin-bottom:4px}
+.p{font-size:12.5px;color:var(--muted);margin-bottom:18px}
+.swr{display:flex;gap:10px;margin-bottom:16px}
+.sw{width:38px;height:38px;border-radius:50%;flex:none;border:2px solid transparent}
+.sw.on{border-color:var(--text)}
+.custom{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:20px}
+.wheel{width:30px;height:30px;border-radius:50%;flex:none;background:conic-gradient(red,#ff0,lime,cyan,blue,magenta,red)}
+.hex{font-size:13px;color:var(--text);direction:ltr;text-align:right}
+.hex small{display:block;color:var(--muted);font-size:11px}
+.modes{display:flex;gap:10px;margin-bottom:22px}
+.mode{flex:1;border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center;font-size:12.5px}
+.mode.on{border-color:var(--accent);color:var(--accent)}
+.prev{font-size:12px;color:var(--muted);margin-bottom:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
+.card .tag{font-size:11px;color:var(--accent);margin-bottom:3px}
+.card b{display:block;font-size:14px;margin-bottom:8px}
+.card .btn{margin:0;padding:9px;font-size:13px}
+.note{max-width:900px;margin:30px auto 0;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<h1>صفحه‌ی ورود و تنظیم تم</h1>
+<p class="sub">هر دو بر اساس همان متغیرهای رنگی طراحی قبلی ساخته شده‌اند</p>
+
+<div class="row">
+  <div class="col"><div class="cap">۱. ورود</div>
+    <div class="phone">
+      <div class="wave-wrap">
+        <div class="logo">م</div>
+        <div class="wtitle">ورود</div>
+        <div class="wsub">ادامه بده همون‌جایی که موندی</div>
+        <svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 C 100 45, 300 -5, 400 20 L400 40 L0 40 Z" fill="#0B0E13"/></svg>
+      </div>
+      <div class="form">
+        <div class="lbl">ایمیل</div>
+        <div class="inp ph">you@example.com</div>
+        <div class="lbl">رمز عبور</div>
+        <div class="inp ph">••••••••</div>
+        <div class="btn">ورود</div>
+        <div class="or">یا</div>
+        <div class="ghostbtn">ورود با گوگل</div>
+        <div style="margin-top:auto">
+          <p class="link">حساب نداری؟ <b>ثبت‌نام کن</b></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col"><div class="cap">۲. تنظیم تم در پروفایل</div>
+    <div class="phone">
+      <div class="pbody">
+        <div class="h">تم اپ</div>
+        <div class="p">رنگ تأکید را خودت انتخاب کن. پس‌زمینه و متن برای خوانایی ثابت می‌مانند.</div>
+
+        <div class="lbl">رنگ‌های پیشنهادی</div>
+        <div class="swr">
+          <div class="sw on" style="background:#7DD3C0"></div>
+          <div class="sw" style="background:#7DA6D3"></div>
+          <div class="sw" style="background:#D3A67D"></div>
+          <div class="sw" style="background:#C97DD3"></div>
+          <div class="sw" style="background:#D37D86"></div>
+        </div>
+
+        <div class="lbl">یا رنگ دلخواه</div>
+        <div class="custom">
+          <div class="wheel"></div>
+          <div class="hex">#7DD3C0<small>ضربه بزن تا رنگ‌یاب باز شود</small></div>
+        </div>
+
+        <div class="lbl">حالت نمایش</div>
+        <div class="modes">
+          <div class="mode on">تیره</div>
+          <div class="mode">روشن</div>
+        </div>
+
+        <div class="prev">پیش‌نمایش زنده</div>
+        <div class="card">
+          <div class="tag">کار بعدی</div>
+          <b>نوشتن گزارش هفتگی</b>
+          <div class="btn">شروع تمرکز</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="note">چون طراحی از اول با متغیر رنگ ساخته شده بود، این بخش فقط همان متغیرها را از پروفایل کاربر می‌خواند؛ چیزی در ساختار صفحات عوض نمی‌شود.</p>
+</body>
+</html>
