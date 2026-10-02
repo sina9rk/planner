@@ -1,11 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AppShell } from "@/components/ui";
 import { requirePersona } from "@/lib/guards";
-import { PATHS } from "@/lib/flow";
 import { prisma } from "@/lib/prisma";
-import { faClock, faMinutes, faNum, faPercent, faRelativeDate } from "@/lib/fa";
-import { AddLogForm } from "../add-log-form";
+import { GoalDetailClient } from "./goal-detail-client";
 
 export const metadata = { title: "جزئیات هدف | برنامه‌ریز" };
 
@@ -22,10 +18,19 @@ export default async function GoalDetailPage({
     include: {
       logs: {
         orderBy: { loggedAt: "desc" },
-        take: 100,
+        take: 200,
+      },
+      tasks: {
+        orderBy: { createdAt: "asc" },
+        include: {
+          subTasks: {
+            orderBy: { createdAt: "asc" },
+          },
+        },
       },
     },
   });
+
   if (!goal) notFound();
 
   const since = new Date();
@@ -42,60 +47,33 @@ export default async function GoalDetailPage({
   }
 
   return (
-    <AppShell title={goal.title}>
-      <Link href={PATHS.goals} className="mb-3 text-xs text-muted">
-        ← بازگشت
-      </Link>
-      <p className="mb-4 text-xs text-muted">
-        هدف هفتگی:{" "}
-        {goal.targetMinutesPerWeek
-          ? faMinutes(goal.targetMinutesPerWeek)
-          : goal.targetDaysPerWeek
-          ? `${faNum(goal.targetDaysPerWeek)} روز`
-          : "—"}
-        {goal.reminderTime ? ` · یادآوری ساعت ${goal.reminderTime}` : ""}
-      </p>
-
-      <div className="mb-4 grid grid-cols-3 gap-2">
-        <div className="rounded-xl border border-line bg-surface p-3 text-center">
-          <b className="block text-lg text-accent">{faMinutes(doneMinutesWeek)}</b>
-          <span className="text-[11px] text-muted">این هفته</span>
-        </div>
-        <div className="rounded-xl border border-line bg-surface p-3 text-center">
-          <b className="block text-lg text-accent">{faNum(doneDaysWeek)}</b>
-          <span className="text-[11px] text-muted">روز فعال</span>
-        </div>
-        <div className="rounded-xl border border-line bg-surface p-3 text-center">
-          <b className="block text-lg text-accent">{faPercent(ratio)}</b>
-          <span className="text-[11px] text-muted">از هدف</span>
-        </div>
-      </div>
-
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-sm font-medium text-muted">ثبت کار امروز</h2>
-        <Link href={`${PATHS.goals}/${goal.id}/advisor`} className="text-xs text-accent">
-          مشاور AI
-        </Link>
-      </div>
-      <AddLogForm goalId={goal.id} />
-
-      <h2 className="mt-6 mb-2 text-sm font-medium text-muted">تاریخچه</h2>
-      <div className="space-y-2 pb-8">
-        {goal.logs.map((log) => (
-          <div key={log.id} className="flex items-start gap-3 border-b border-line py-3 last:border-0">
-            <div className="mt-2 size-2 shrink-0 rounded-full bg-accent" />
-            <div>
-              <b className="block">{faMinutes(log.durationMinutes)}</b>
-              <span className="text-xs text-muted">
-                {log.note || "—"} · {faRelativeDate(log.loggedAt)} · {faClock(log.loggedAt)}
-              </span>
-            </div>
-          </div>
-        ))}
-        {goal.logs.length === 0 && (
-          <p className="py-4 text-center text-xs text-muted">هنوز لاگی ثبت نشده</p>
-        )}
-      </div>
-    </AppShell>
+    <GoalDetailClient
+      goal={{
+        id: goal.id,
+        title: goal.title,
+        horizon: goal.horizon,
+        targetEndDate: goal.targetEndDate,
+        targetMinutesPerWeek: goal.targetMinutesPerWeek,
+        targetDaysPerWeek: goal.targetDaysPerWeek,
+        reminderTime: goal.reminderTime,
+      }}
+      doneMinutesWeek={doneMinutesWeek}
+      doneDaysWeek={doneDaysWeek}
+      ratio={ratio}
+      tasks={goal.tasks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        status: t.status as "PENDING" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED",
+        parentTaskId: t.parentTaskId,
+        subTasks: [],
+      }))}
+      logs={goal.logs.map((l) => ({
+        id: l.id,
+        durationMinutes: l.durationMinutes,
+        note: l.note,
+        loggedAt: l.loggedAt,
+        taskId: l.taskId,
+      }))}
+    />
   );
 }

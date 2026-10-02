@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>طراحی اپ - جزئیات هدف (ترکیبی) و تسک‌ها</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B0E13;--surface:#151A22;--raised:#1D2430;--line:#2A3241;--text:#E8ECF2;--muted:#8B95A7;--accent:#7DD3C0;--ink:#06211B;--warn:#F2B872;box-sizing:border-box}
+*{box-sizing:border-box;margin:0}
+body{background:#05070A;color:var(--text);font-family:"Vazirmatn",Tahoma,sans-serif;line-height:1.7;padding:24px 16px}
+h1{font-size:20px;text-align:center}
+.sub{color:var(--muted);text-align:center;font-size:13px;margin:4px 0 26px}
+.row{display:flex;flex-wrap:wrap;gap:26px;justify-content:center}
+.col{width:300px}
+.cap{color:var(--muted);font-size:12px;text-align:center;margin-bottom:10px}
+.phone{background:var(--bg);border:1px solid var(--line);border-radius:30px;height:620px;overflow:hidden;display:flex;flex-direction:column}
+.pad{padding:17px 16px;display:flex;flex-direction:column;height:100%}
+.back{font-size:12px;color:var(--muted);margin-bottom:8px}
+.h{font-size:17px;font-weight:700}
+.p{font-size:12px;color:var(--muted);margin:3px 0 12px}
+.horizon{display:inline-block;background:var(--raised);border-radius:20px;padding:3px 10px;font-size:10.5px;color:var(--accent);margin-bottom:12px}
+.stats{display:flex;gap:8px;margin-bottom:14px}
+.stat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:9px;text-align:center}
+.stat b{display:block;font-size:15px;color:var(--accent)}
+.stat span{font-size:10px;color:var(--muted)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;text-align:center;padding:8px;border-radius:10px;font-size:12px;background:var(--raised);color:var(--muted)}
+.tab.on{background:var(--accent);color:var(--ink);font-weight:700}
+.list{flex:1;overflow:hidden}
+.task{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:8px}
+.trow{display:flex;align-items:center;gap:10px}
+.chk{width:19px;height:19px;border:2px solid var(--line);border-radius:6px;flex:none}
+.chk.done{background:var(--accent);border-color:var(--accent)}
+.tname{font-size:13px;flex:1}
+.tname.done{color:var(--muted);text-decoration:line-through}
+.sub2{margin-top:8px;margin-right:29px;border-right:1px solid var(--line);padding-right:10px}
+.sub2 .trow{margin-bottom:6px}
+.sub2 .tname{font-size:12px}
+.timeinput{margin-right:29px;margin-top:8px;display:flex;align-items:center;gap:6px;background:var(--raised);border-radius:10px;padding:7px 10px;font-size:11.5px;color:var(--muted)}
+.addtask{border:1px dashed var(--line);border-radius:12px;padding:10px;text-align:center;font-size:12px;color:var(--muted);margin-bottom:12px}
+.freebtn{border:1px solid var(--accent);color:var(--accent);border-radius:12px;padding:10px;text-align:center;font-size:12.5px;margin-top:auto}
+
+/* tasks page */
+.datetabs{display:flex;gap:6px;margin-bottom:14px}
+.dgroup{font-size:11.5px;color:var(--muted);margin:14px 0 8px}
+.titem{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:10px 12px;margin-bottom:8px}
+.gtag{font-size:9.5px;background:var(--raised);color:var(--accent);padding:2px 7px;border-radius:10px;margin-right:auto}
+.when{font-size:10.5px;color:var(--warn)}
+</style>
+</head>
+<body>
+<h1>جزئیات هدف (ترکیبی) و صفحه‌ی تسک‌ها</h1>
+<p class="sub">تسک گسسته با چک‌باکس، لاگ آزاد جدا، وصل‌شدن اختیاری این دو به هم</p>
+
+<div class="row">
+  <div class="col"><div class="cap">۱. جزئیات هدف</div>
+    <div class="phone"><div class="pad">
+      <div class="back">← اهداف</div>
+      <div class="h">یادگیری زبان</div>
+      <div class="horizon">هدف بلندمدت · تا پایان مهر</div>
+
+      <div class="stats">
+        <div class="stat"><b>۳:۱۰</b><span>این هفته</span></div>
+        <div class="stat"><b>۴ از ۹</b><span>تسک انجام‌شده</span></div>
+        <div class="stat"><b>۶۲٪</b><span>پیشرفت</span></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab on">تسک‌ها</div>
+        <div class="tab">تاریخچه</div>
+      </div>
+
+      <div class="list">
+        <div class="task">
+          <div class="trow"><div class="chk done"></div><span class="tname done">فصل ۲ گرامر</span></div>
+          <div class="timeinput">⏱ ۴۵ دقیقه ثبت شد</div>
+        </div>
+
+        <div class="task">
+          <div class="trow"><div class="chk"></div><span class="tname">فصل ۳ گرامر: زمان حال کامل</span></div>
+          <div class="sub2">
+            <div class="trow"><div class="chk done"></div><span class="tname done">خواندن قاعده</span></div>
+            <div class="trow"><div class="chk"></div><span class="tname">۱۰ مثال تمرین</span></div>
+          </div>
+        </div>
+
+        <div class="task">
+          <div class="trow"><div class="chk"></div><span class="tname">۲۰ لغت جدید حفظ کن</span></div>
+        </div>
+
+        <div class="addtask">+ تسک جدید (بعداً: پیشنهاد AI)</div>
+      </div>
+
+      <div class="freebtn">+ ثبت کار آزاد (بدون تسک مشخص)</div>
+    </div></div>
+  </div>
+
+  <div class="col"><div class="cap">۲. صفحه‌ی تسک‌ها</div>
+    <div class="phone"><div class="pad">
+      <div class="h">تسک‌های من</div>
+      <div class="p">همه‌ی کارها، از اهداف و مستقل</div>
+
+      <div class="datetabs">
+        <div class="tab on">روز</div>
+        <div class="tab">هفته</div>
+        <div class="tab">ماه</div>
+      </div>
+
+      <div class="list">
+        <div class="dgroup">الان</div>
+        <div class="titem"><div class="chk"></div><span class="tname">فصل ۳ گرامر: زمان حال کامل</span><span class="gtag">یادگیری زبان</span></div>
+        <div class="titem"><div class="chk"></div><span class="tname">تمرین گام‌های ویولن</span><span class="gtag">ویولن</span></div>
+
+        <div class="dgroup">عصر</div>
+        <div class="titem"><div class="chk"></div><span class="tname">پاسخ به ایمیل‌ها</span><span class="when">۱۶:۰۰</span></div>
+        <div class="titem"><div class="chk"></div><span class="tname">خرید وسایل خانه</span></div>
+
+        <div class="dgroup">دیروز (جامانده)</div>
+        <div class="titem" style="opacity:.6"><div class="chk"></div><span class="tname">۲۰ لغت جدید حفظ کن</span><span class="gtag">یادگیری زبان</span></div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<p class="note" style="max-width:900px;margin:28px auto 0;color:var(--muted);font-size:13px;text-align:center">
+در صفحه‌ی هدف، تیک‌زدن تسک یک کادر «چقدر طول کشید؟» اختیاری باز می‌کند که اگر پر شود، همان رکورد لاگ تاریخچه هم می‌شود.
+تب «تاریخچه» کنار «تسک‌ها» دقیقاً همان لیست GoalLog قبلی است، فقط حالا کنار چک‌لیست تسک‌ها نشسته، نه به‌جایش.
+</p>
+</body>
+</html>

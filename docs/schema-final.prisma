@@ -64,11 +64,16 @@ model Task {
   parent         Task?      @relation("SubTasks", fields: [parentTaskId], references: [id], onDelete: Cascade)
   subTasks       Task[]     @relation("SubTasks")
 
+  // اگر پر باشد، یعنی این تسک زیرمجموعه‌ی یک هدف بلندمدت است (برنامه‌ریزی AI در آینده از همین استفاده می‌کند)
+  goalId         String?
+  goal           Goal?      @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
   createdByBreakdown Boolean @default(false)
 
   @@index([userId, status])
   @@index([userId, scheduledFor])
   @@index([parentTaskId])
+  @@index([goalId])
 }
 
 enum TaskStatus {
@@ -89,7 +94,9 @@ model Goal {
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   title          String
-  targetMinutesPerWeek Int?       // هدف هفتگی به دقیقه (برای داشبورد)
+  horizon        String    @default("weekly")   // "weekly" | "monthly" | "custom" - افق زمانی هدف
+  targetEndDate  DateTime?                       // برای horizon های monthly/custom، تاریخ پایان (اختیاری)
+  targetMinutesPerWeek Int?       // هدف هفتگی به دقیقه (برای داشبورد و نوار پیشرفت)
   targetDaysPerWeek    Int?       // یا هدف بر اساس تعداد روز
   reminderTime         String?    // ساعت یادآوری ثابت، مثلاً "07:30" (Local Notification)
   reminderDays          Int[]     @default([])  // روزهای هفته، 0=یکشنبه ... 6=شنبه
@@ -98,17 +105,20 @@ model Goal {
   createdAt      DateTime  @default(now())
 
   logs           GoalLog[]
+  tasks          Task[]    // تسک/زیرتسک‌های زیرمجموعه‌ی این هدف (برای برنامه‌ریزی بلندمدت و AI آینده)
 
   @@index([userId, active])
 }
 
-// هر رکورد یعنی یک جلسه‌ی کار روی هدف
+// هر رکورد یعنی یک جلسه‌ی کار روی هدف. یا مستقل ثبت می‌شود (کار آزاد، بدون تسک مشخص)
+// یا هنگام تیک‌زدن یک Task به‌صورت اختیاری ساخته می‌شود (taskId پر می‌شود).
 model GoalLog {
   id             String    @id @default(uuid())
   goalId         String
   goal           Goal      @relation(fields: [goalId], references: [id], onDelete: Cascade)
   userId         String
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId         String?                        // اختیاری: اگر این لاگ از تکمیل یک Task آمده باشد
 
   durationMinutes Int
   note           String?                        // مثلاً "فصل سوم کتاب گرامر"
@@ -116,6 +126,7 @@ model GoalLog {
 
   @@index([goalId, loggedAt])
   @@index([userId, loggedAt])
+  @@index([taskId])
 }
 
 // ---------------------------------------------------------------
