@@ -53,6 +53,7 @@ export type EventType =
   | "onboarding_started"
   | "onboarding_answered"
   | "onboarding_completed"
+  | "onboarding_reset"
   | "persona_assigned"
   | "goal_created"
   | "goal_updated"

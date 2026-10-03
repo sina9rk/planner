@@ -243,9 +243,9 @@ export function StatTile({
  */
 export function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between border-b border-line px-0.5 py-2.5 text-[13px] last:border-b-0">
-      <span>{label}</span>
-      <span className="text-muted">{value}</span>
+    <div className="flex items-center justify-between gap-3 border-b border-line px-0.5 py-2.5 text-[13px] last:border-b-0">
+      <span className="shrink-0">{label}</span>
+      <span className="min-w-0 break-words text-left text-muted">{value}</span>
     </div>
   );
 }

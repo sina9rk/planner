@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { requirePersona } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
-import { AppShell } from "@/components/ui";
-import Link from "next/link";
+import { AppShell, StatTile } from "@/components/ui";
 import { PATHS } from "@/lib/flow";
-import { faMinutes, faNum, faPercent, faRelativeDate } from "@/lib/fa";
-import { GoalTabs } from "./goal-tabs";
+import { faClock, faMinutes, faNum, faPercent, faRelativeDate } from "@/lib/fa";
+import { AddLogForm } from "./add-log-form";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { GoalTasks } from "./goal-tasks";
 
 export const metadata = { title: "جزئیات هدف | برنامه‌ریز" };
 
@@ -26,11 +28,6 @@ export default async function GoalDetailPage({
       },
       tasks: {
         orderBy: { createdAt: "asc" },
-        include: {
-          subTasks: {
-            orderBy: { createdAt: "asc" },
-          },
-        },
       },
     },
   });
@@ -50,48 +47,14 @@ export default async function GoalDetailPage({
     ratio = Math.min(1, doneDaysWeek / goal.targetDaysPerWeek);
   }
 
-  function flattenTasks(ts: NonNullable<typeof goal>["tasks"]) {
-    const result: Array<{
-      id: string;
-      title: string;
-      status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED";
-      parentTaskId: string | null;
-      subTasks: never[];
-    }> = [];
-    for (const t of ts) {
-      result.push({
-        id: t.id,
-        title: t.title,
-        status: t.status as "PENDING" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED",
-        parentTaskId: t.parentTaskId,
-        subTasks: [],
-      });
-      for (const st of t.subTasks) {
-        result.push({
-          id: st.id,
-          title: st.title,
-          status: st.status as "PENDING" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED",
-          parentTaskId: st.parentTaskId,
-          subTasks: [],
-        });
-      }
-    }
-    return result;
-  }
+  const completedTasksCount = goal.tasks.filter((t) => t.status === "COMPLETED").length;
+  const totalTasksCount = goal.tasks.length;
 
   return (
     <AppShell title={goal.title}>
       <Link href={PATHS.goals} className="mb-3 text-xs text-muted">
         ← بازگشت
       </Link>
-      <p className="mb-2 text-xs text-muted">
-        {goal.horizon === "custom" || goal.horizon === "monthly"
-          ? goal.targetEndDate
-            ? `هدف ${goal.horizon === "monthly" ? "ماهانه" : "سفارشی"} · تا ${faRelativeDate(new Date(goal.targetEndDate))}`
-            : `هدف ${goal.horizon === "monthly" ? "ماهانه" : "سفارشی"}`
-          : "هدف بلندمدت"}
-        {goal.reminderTime ? ` · یادآوری ساعت ${goal.reminderTime}` : ""}
-      </p>
       <p className="mb-4 text-xs text-muted">
         هدف هفتگی:{" "}
         {goal.targetMinutesPerWeek
@@ -99,34 +62,45 @@ export default async function GoalDetailPage({
           : goal.targetDaysPerWeek
           ? `${faNum(goal.targetDaysPerWeek)} روز`
           : "—"}
+        {goal.reminderTime ? ` · یادآوری ساعت ${goal.reminderTime}` : ""}
       </p>
 
       <div className="mb-4 grid grid-cols-3 gap-2">
-        <div className="rounded-xl border border-line bg-surface p-3 text-center">
-          <b className="block text-lg text-accent">{faMinutes(doneMinutesWeek)}</b>
-          <span className="text-[11px] text-muted">این هفته</span>
-        </div>
-        <div className="rounded-xl border border-line bg-surface p-3 text-center">
-          <b className="block text-lg text-accent">{faNum(doneDaysWeek)}</b>
-          <span className="text-[11px] text-muted">روز فعال</span>
-        </div>
-        <div className="rounded-xl border border-line bg-surface p-3 text-center">
-          <b className="block text-lg text-accent">{faPercent(ratio)}</b>
-          <span className="text-[11px] text-muted">از هدف</span>
-        </div>
+        <StatTile value={faMinutes(doneMinutesWeek)} label="این هفته" />
+        <StatTile value={`${faNum(completedTasksCount)} از ${faNum(totalTasksCount)}`} label="تسک انجام‌شده" />
+        <StatTile value={faPercent(ratio)} label="از هدف" />
       </div>
 
-      <GoalTabs
-        goalId={goal.id}
-        tasks={flattenTasks(goal.tasks)}
-        logs={goal.logs.map((l) => ({
-          id: l.id,
-          durationMinutes: l.durationMinutes,
-          note: l.note,
-          loggedAt: l.loggedAt,
-          taskId: l.taskId,
-        }))}
-      />
+      <Tabs defaultValue="tasks">
+        <TabsList className="mb-4 w-full">
+          <TabsTrigger value="tasks">تسک‌ها</TabsTrigger>
+          <TabsTrigger value="history">تاریخچه</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tasks">
+          <GoalTasks goalId={goal.id} tasks={goal.tasks} />
+        </TabsContent>
+        <TabsContent value="history">
+          <h2 className="mb-2 text-sm font-medium text-muted">ثبت کار امروز</h2>
+          <AddLogForm goalId={goal.id} />
+          <h2 className="mt-6 mb-2 text-sm font-medium text-muted">تاریخچه</h2>
+          <div className="space-y-2 pb-8">
+            {goal.logs.map((log) => (
+              <div key={log.id} className="flex min-w-0 items-start gap-3 border-b border-line py-3 last:border-0">
+                <div className="mt-2 size-2 shrink-0 rounded-full bg-accent" />
+                <div className="min-w-0 flex-1">
+                  <b className="block text-text">{faMinutes(log.durationMinutes)}</b>
+                  <span className="block break-words text-xs text-muted">
+                    {log.note || "—"} · {faRelativeDate(log.loggedAt)} · {faClock(log.loggedAt)}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {goal.logs.length === 0 && (
+              <p className="py-4 text-center text-xs text-muted">هنوز لاگی ثبت نشده</p>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </AppShell>
   );
 }

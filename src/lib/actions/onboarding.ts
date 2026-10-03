@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { track } from "@/lib/track";
 import { PATHS } from "@/lib/flow";
@@ -109,16 +110,25 @@ export async function answerQuestionAction(formData: FormData) {
   revalidatePath(PATHS.onboarding);
 }
 
-/** شروع از اول: پاسخ‌ها و پرسونا پاک می‌شوند تا کاربر دوباره سؤال‌ها را ببیند. */
+/**
+ * شروع از اول: پاسخ‌ها و پرسونا پاک می‌شوند تا کاربر دوباره سؤال‌ها را ببیند.
+ *
+ * پاک‌کردن JSON با `Prisma.DbNull` انجام می‌شود نه `undefined`: در Prisma مقدار
+ * `undefined` یعنی «این ستون را در آپدیت نگذار»، نه «null کن». با undefined پاسخ‌های
+ * قبلی می‌ماندند و کاربر عملاً دوباره سؤال‌ها را نمی‌دید.
+ */
 export async function restartOnboardingAction() {
   const userId = await currentUserId();
   if (!userId) redirect(PATHS.login);
 
   await prisma.user.update({
     where: { id: userId },
-    data: { onboardingAnswers: undefined, personaId: null },
+    data: { onboardingAnswers: Prisma.DbNull, personaId: null },
   });
 
+  await track(userId, "onboarding_reset", {});
+
+  revalidatePath(PATHS.profile);
   revalidatePath(PATHS.onboarding);
   redirect(PATHS.onboarding);
 }

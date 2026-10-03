@@ -64,19 +64,26 @@ function groupByDay(tasks: Task[], now: Date): GroupedTasks[] {
 
   for (const t of tasks) {
     let key = "دیگر";
-    const ref = t.scheduledFor || t.deadline;
-    if (ref) {
+    if (t.status === "COMPLETED") {
+      const ref = t.completedAt || t.scheduledFor || t.deadline || new Date();
       const r = startOfDay(ref);
-      if (isSameDay(r, today)) key = "امروز";
-      else if (isSameDay(r, yesterday)) key = "دیروز";
-      else key = faRelativeDate(ref, now);
-    } else if (t.completedAt) {
-      const c = startOfDay(t.completedAt);
-      if (isSameDay(c, today)) key = "امروز (تکمیل‌شده)";
-      else if (isSameDay(c, yesterday)) key = "دیروز (تکمیل‌شده)";
-      else key = `${faRelativeDate(c, now)} (تکمیل‌شده)`;
+      if (isSameDay(r, today)) key = "امروز (تکمیل‌شده)";
+      else if (isSameDay(r, yesterday)) key = "دیروز (تکمیل‌شده)";
+      else key = `${faRelativeDate(r, now)} (تکمیل‌شده)`;
     } else {
-      key = "بدون زمان‌بندی";
+      const ref = t.scheduledFor || t.deadline;
+      if (ref) {
+        const r = startOfDay(ref);
+        if (isSameDay(r, today)) {
+          const h = ref.getHours();
+          if (h < 12) key = "امروز · صبح";
+          else if (h < 18) key = "امروز · عصر";
+          else key = "امروز · شب";
+        } else if (isSameDay(r, yesterday)) key = "دیروز";
+        else key = faRelativeDate(ref, now);
+      } else {
+        key = "بدون زمان‌بندی";
+      }
     }
     if (!groups[key]) groups[key] = [];
     groups[key].push(t);
@@ -155,22 +162,26 @@ export function TasksPageClient({ tasks }: { tasks: Task[] }) {
   function renderTask(t: Task) {
     const isCompleted = t.status === "COMPLETED";
     return (
-      <div key={t.id} className="flex items-center gap-3 rounded-xl border border-line bg-surface px-3 py-2">
+      <div key={t.id} className="mb-2 flex min-w-0 items-center gap-3 rounded-xl border border-line bg-surface p-3">
         <input
           type="checkbox"
           checked={isCompleted}
           onChange={() => handleTaskToggle(t.id, t.status)}
-          className="size-5 accent-accent"
+          className="size-5 shrink-0 rounded-md accent-accent"
           disabled={isCompleted}
         />
-        <span className={`flex-1 text-sm ${isCompleted ? "text-muted line-through" : ""}`}>
+        <span
+          className={`min-w-0 flex-1 break-words text-sm text-text ${
+            isCompleted ? "text-muted line-through" : ""
+          }`}
+        >
           {t.title}
         </span>
         {t.goalId && t.goalTitle && (
-          <span className="rounded-full bg-raised px-2 py-0.5 text-[10px] text-accent">{t.goalTitle}</span>
+          <span className="shrink-0 rounded-full bg-raised px-2 py-0.5 text-[10px] text-accent ring-1 ring-line/60">{t.goalTitle}</span>
         )}
         {(t.scheduledFor || t.deadline) && !isCompleted && (
-          <span className="text-[10px] text-warn">
+          <span className="shrink-0 text-[10px] text-warn">
             {faClock(t.scheduledFor || t.deadline!)}
           </span>
         )}
