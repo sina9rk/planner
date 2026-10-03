@@ -3,28 +3,12 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { addGoalLogAction } from "@/lib/actions/goal-log";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import {
-  ghostButtonClass,
-  inputClass,
-  primaryButtonClass,
-} from "@/components/ui";
-import { WheelPicker, WheelPickerWrapper } from "@/components/wheel-picker";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { primaryButtonClass } from "@/components/ui";
 import { TimeInput } from "./time-input";
 import { RichTextEditor } from "./rich-text-editor";
-
+type ActionState = { ok: boolean } | null;
 // Helper برای ساخت آرایه اعداد
-const createArray = (length: number, add = 0) =>
-  Array.from({ length }, (_, i) => {
-    const value = i + add;
-    return {
-      label: value.toString().padStart(2, "0"),
-      value: value,
-    };
-  });
-
-const hourOptions = createArray(24); // 0-23
-const minuteOptions = createArray(60); // 0-59
 
 function Submit() {
   const { pending } = useFormStatus();
@@ -42,30 +26,19 @@ export function AddLogSheet({ goalId }: { goalId: string }) {
   const [open, setOpen] = useState(false);
   const [durationMinutes, setDurationMinutes] = useState(45); // مقدار پیش‌فرض
   const [note, setNote] = useState("");
-  const [state, formAction] = useActionState<{ ok: boolean } | null, FormData>(
-    async (_prev, fd) => {
-      fd.set("note", htmlToText(note)); // ← اضافه کنید
+  const [state, formAction] = useActionState<ActionState, FormData>(
+    async (_prev: ActionState, fd: FormData) => {
+      fd.set("note", htmlToText(note));
       const result = await addGoalLogAction(fd);
       if (result?.ok) {
         setOpen(false);
         setDurationMinutes(0);
-        setNote(""); // ← ریست ادیتور
+        setNote("");
       }
       return result;
     },
     null,
   );
-  // محاسبه ساعت و دقیقه از durationMinutes
-  const hours = Math.floor(durationMinutes / 60);
-  const minutes = durationMinutes % 60;
-
-  const handleHourChange = (newHour: number) => {
-    setDurationMinutes(newHour * 60 + minutes);
-  };
-
-  const handleMinuteChange = (newMinute: number) => {
-    setDurationMinutes(hours * 60 + newMinute);
-  };
 
   return (
     <>
