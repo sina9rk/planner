@@ -35,14 +35,16 @@ type GroupedTasks = {
 };
 
 function isSameDay(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
 }
 
 function startOfDay(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
-
-
 
 function startOfWeek(d: Date) {
   const date = new Date(d);
@@ -92,8 +94,16 @@ function groupByDay(tasks: Task[], now: Date): GroupedTasks[] {
   return Object.entries(groups).map(([title, tasks]) => ({
     title,
     tasks: tasks.sort((a, b) => {
-      const aTime = a.scheduledFor?.getTime() || a.deadline?.getTime() || a.createdAt?.getTime?.() || 0;
-      const bTime = b.scheduledFor?.getTime() || b.deadline?.getTime() || b.createdAt?.getTime?.() || 0;
+      const aTime =
+        a.scheduledFor?.getTime() ||
+        a.deadline?.getTime() ||
+        a.createdAt?.getTime?.() ||
+        0;
+      const bTime =
+        b.scheduledFor?.getTime() ||
+        b.deadline?.getTime() ||
+        b.createdAt?.getTime?.() ||
+        0;
       return aTime - bTime;
     }),
   }));
@@ -123,7 +133,11 @@ function groupByWeek(tasks: Task[], now: Date): GroupedTasks[] {
 function groupByMonth(tasks: Task[], now: Date): GroupedTasks[] {
   const groups: Record<string, Task[]> = {};
   const monthStart = startOfMonth(now);
-  const prevMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() - 1, 1);
+  const prevMonth = new Date(
+    monthStart.getFullYear(),
+    monthStart.getMonth() - 1,
+    1,
+  );
 
   for (const t of tasks) {
     const ref = t.scheduledFor || t.deadline || t.completedAt || new Date();
@@ -131,7 +145,11 @@ function groupByMonth(tasks: Task[], now: Date): GroupedTasks[] {
     let key = "ماه دیگر";
     if (r.getTime() === monthStart.getTime()) key = "این ماه";
     else if (r.getTime() === prevMonth.getTime()) key = "ماه گذشته";
-    else key = new Intl.DateTimeFormat("fa-IR", { month: "long", year: "numeric" }).format(ref);
+    else
+      key = new Intl.DateTimeFormat("fa-IR", {
+        month: "long",
+        year: "numeric",
+      }).format(ref);
     if (!groups[key]) groups[key] = [];
     groups[key].push(t);
   }
@@ -144,7 +162,7 @@ export function TasksPageClient({ tasks }: { tasks: Task[] }) {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [, completeTask] = useActionState(
     (_: void | null, fd: FormData) => completeTaskAction(fd),
-    null
+    null,
   );
   const now = new Date();
 
@@ -162,12 +180,15 @@ export function TasksPageClient({ tasks }: { tasks: Task[] }) {
   function renderTask(t: Task) {
     const isCompleted = t.status === "COMPLETED";
     return (
-      <div key={t.id} className="mb-2 flex min-w-0 items-center gap-3 rounded-xl border border-line bg-surface p-3">
+      <div
+        key={t.id}
+        className="mb-2 flex min-w-0 items-center gap-3 rounded-xl border border-line bg-surface p-3"
+      >
         <input
           type="checkbox"
           checked={isCompleted}
           onChange={() => handleTaskToggle(t.id, t.status)}
-          className="size-5 shrink-0 rounded-md accent-accent"
+          className="size-5 shrink-0 rounded-md accent-accent "
           disabled={isCompleted}
         />
         <span
@@ -178,7 +199,9 @@ export function TasksPageClient({ tasks }: { tasks: Task[] }) {
           {t.title}
         </span>
         {t.goalId && t.goalTitle && (
-          <span className="shrink-0 rounded-full bg-raised px-2 py-0.5 text-[10px] text-accent ring-1 ring-line/60">{t.goalTitle}</span>
+          <span className="shrink-0 rounded-full bg-raised px-2 py-0.5 text-[10px] text-accent ring-1 ring-line/60">
+            {t.goalTitle}
+          </span>
         )}
         {(t.scheduledFor || t.deadline) && !isCompleted && (
           <span className="shrink-0 text-[10px] text-warn">
@@ -201,7 +224,7 @@ export function TasksPageClient({ tasks }: { tasks: Task[] }) {
   return (
     <AppShell title="تسک‌های من">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4 w-full">
+        <TabsList className="mb-4 mt-4 w-full">
           <TabsTrigger value="day">روز</TabsTrigger>
           <TabsTrigger value="week">هفته</TabsTrigger>
           <TabsTrigger value="month">ماه</TabsTrigger>
@@ -216,7 +239,8 @@ export function TasksPageClient({ tasks }: { tasks: Task[] }) {
           <DialogHeader>
             <DialogTitle>چقدر طول کشید؟</DialogTitle>
             <DialogDescription>
-              اگر این تسک مربوط به یه هدفه و می‌خوای زمانش ثبت شه، مدت رو وارد کن.
+              اگر این تسک مربوط به یه هدفه و می‌خوای زمانش ثبت شه، مدت رو وارد
+              کن.
             </DialogDescription>
           </DialogHeader>
           <form action={completeTask} className="space-y-3">
@@ -240,7 +264,9 @@ export function TasksPageClient({ tasks }: { tasks: Task[] }) {
               <button type="submit" className={primaryButtonClass}>
                 تیک بزن و ثبت کن
               </button>
-              <DialogClose render={<button type="button" className={ghostButtonClass} />}>
+              <DialogClose
+                render={<button type="button" className={ghostButtonClass} />}
+              >
                 فقط تیک بزن
               </DialogClose>
             </DialogFooter>

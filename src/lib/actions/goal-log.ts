@@ -58,5 +58,8 @@ export async function addGoalLogAction(formData: FormData) {
 
   revalidatePath(PATHS.goals);
   revalidatePath(`${PATHS.goals}/${goal.id}`);
-  redirect(`${PATHS.goals}/${goal.id}`);
+  // عمداً redirect نمی‌کنیم: شیتِ ثبت باید بعد از موفقیت بسته شود و این را از
+  // روی state همین اکشن می‌فهمد. redirect به همان مسیر، state کلاینت را نگه
+  // می‌داشت و شیت باز می‌ماند. revalidatePath خودش لیست تاریخچه را تازه می‌کند.
+  return { ok: true };
 }

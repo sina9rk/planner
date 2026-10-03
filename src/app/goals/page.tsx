@@ -23,7 +23,7 @@ export default async function GoalsListPage() {
         </Link>
       }
     >
-      <p className="mb-4 text-[13px] text-muted">
+      <p className="mb-4 mt-4 text-[13px] text-muted">
         {faNum(progress.length)} هدف فعال
       </p>
 
@@ -54,7 +54,8 @@ export default async function GoalsListPage() {
 
               <div className="mt-2 flex items-center justify-between text-xs text-muted">
                 <span>
-                  این هفته: <b className="text-accent">{faMinutes(goal.doneMinutes)}</b>
+                  این هفته:{" "}
+                  <b className="text-accent">{faMinutes(goal.doneMinutes)}</b>
                 </span>
                 {goal.targetMinutesPerWeek ? (
                   <span>هدف: {faMinutes(goal.targetMinutesPerWeek)}</span>

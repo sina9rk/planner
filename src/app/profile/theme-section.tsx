@@ -6,6 +6,8 @@ import { resetThemeAction, saveThemeAction } from "@/lib/actions/theme";
 import {
   DEFAULT_ACCENT,
   normalizeAccent,
+  THEME_STORAGE_KEY,
+  type StoredTheme,
   type ThemeMode,
 } from "@/lib/theme";
 
@@ -21,6 +23,17 @@ import {
  * مقایسه با props برای تشخیص «ذخیره‌نشده» عمداً است: بعد از ذخیره، اکشن
  * revalidatePath می‌کند و props تازه می‌آیند، پس state جدا برای «آخرین مقدار
  * ذخیره‌شده» فقط یک منبع حقیقت دیگر می‌شد که باید دستی sync می‌ماند.
+ *
+ * هنگام پیش‌نمایش، هم کلاس dark/light و هم صفت data-theme روی <html> عوض
+ * می‌شوند: صفت پالت خودِ اپ را عوض می‌کند (globals.css با
+ * :root[data-theme="..."] می‌گیردش) و کلاس، واریانت `dark:` تِیلویند و
+ * توکن‌های shadcn را. layout هر دو را از دیتابیس روی <html> می‌گذارد، پس
+ * سرور و اولین رندر کلاینت یکی‌اند. حالت روشن هم همین‌جا معنا پیدا می‌کند:
+ * تا وقتی کلاس و صفت عوض نشوند، انتخاب «روشن» هیچ اثری روی CSS نداشت.
+ *
+ * localStorage فقط آینهٔ نوشتنیِ مقدار ذخیره‌شده است و هیچ‌جا خوانده نمی‌شود:
+ * خواندنش هنگام رندر یک منبع حقیقت دوم می‌ساخت که با دیتابیس فرق می‌کرد و
+ * همان hydration mismatch را برمی‌گرداند.
  */
 export function ThemeSection({
   initialAccent,
@@ -32,14 +45,38 @@ export function ThemeSection({
   const [accent, setAccent] = useState(initialAccent);
   const [mode, setMode] = useState<ThemeMode>(initialMode);
 
+  /*
+    mounted یک تضمین است، نه منبع حالت: مقدار اولیهٔ state همان props است، پس
+    مقایسه در اولین رندر کلاینت هم به‌هرحال false است و این گیت امروز چیزی را
+    عوض نمی‌کند. کارکردش این است که اگر روزی کسی مقدار اولیهٔ state را از
+    localStorage یا matchMedia گرفت، رندر اول همچنان با HTML سرور یکی بماند.
+  */
+
   const dirty =
-    accent.toUpperCase() !== initialAccent.toUpperCase() || mode !== initialMode;
+    accent.toUpperCase() !== initialAccent.toUpperCase() ||
+    mode !== initialMode;
 
   useEffect(() => {
     const root = document.documentElement;
+    root.classList.toggle("dark", mode === "dark");
+    root.classList.toggle("light", mode === "light");
     root.dataset.theme = mode;
     root.style.setProperty("--accent", accent);
   }, [accent, mode]);
+
+  // آینهٔ نوشتنی: مقدارِ ذخیره‌شده در دیتابیس اینجا کش می‌شود تا بعداً
+  // (اسکریپت پیش از hydration یا اجرای آفلاین در WebView) قابل خواندن باشد.
+  useEffect(() => {
+    try {
+      const snapshot: StoredTheme = {
+        accent: initialAccent,
+        mode: initialMode,
+      };
+      window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(snapshot));
+    } catch {
+      // حافظهٔ مرورگر در دسترس نیست (حالت خصوصی)؛ دیتابیس منبع حقیقت می‌ماند.
+    }
+  }, [initialAccent, initialMode]);
 
   return (
     <section>

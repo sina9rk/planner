@@ -18,14 +18,23 @@
      بتواند --text را آزادانه عوض کند، تضمین خوانایی از بین می‌رود. کاربر
      فقط حالت را عوض می‌کند.
 
-۲. این متغیرها به کلاس dark/light روی <html> گره خورده‌اند و هیچ مکان
-      دیگری در اپ حالت را تعیین نمی‌کند. کلاس را next-themes مدیریت می‌کند
-      (Providers در layout)؛ همین یک منبع حقیقت باعث می‌شود حالت بین
-      صفحه‌ها و رفرش‌ها گم نشود.
+۲. خودِ پالت به صفت data-theme روی <html> گره خورده است، نه به کلاس.
+      صفت را layout از دیتابیس می‌گذارد و theme-section هنگام پیش‌نمایش زنده
+      همان را عوض می‌کند.
 
-      عمداً :root هم در بلوک تیره هست: قبل از اینکه اسکریپت next-themes
-      کلاس را بگذارد، <html> هیچ کلاسی ندارد و باید یک رنگ پایه داشته باشد؛
-      تیره به‌عنوان پایه انتخاب شده چون رنگ‌های خنثی‌تری دارد.
+      انتخابگر عمداً :root[data-theme="..."] نوشته شده (specificity 0,2,0) تا
+      از پیش‌فرض‌های shadcn در بلوک :root که پایین‌تر در همین فایل هستند
+      (0,1,0) جلو بزند. بدون آن، --muted که هم shadcn و هم این پالت از آن
+      استفاده می‌کنند با مقدار سطحی shadcn بازنویسی می‌شد و متن ثانویه
+      ناخوانا می‌شد.
+
+      کلاس dark/light هم روی <html> می‌نشیند (layout از همان theme.mode)، ولی
+      نه برای این پالت: آن کلاس واریانت `dark:` تِیلویند و توکن‌های shadcn در
+      بلوک `.dark` را فعال می‌کند.
+
+      عمداً :root هم در بلوک تیره هست: اگر صفت data-theme هنوز نرسیده باشد
+      <html> هیچ حالتی ندارد و به یک رنگ پایه نیاز دارد؛ تیره به‌عنوان پایه
+      انتخاب شده چون رنگ‌های خنثی‌تری دارد.
 */
 
 /* --ink روی --accent محاسبه می‌شود تا خوانایی متن روی رنگ تأکید
@@ -33,7 +42,7 @@
    این کار را color-mix انجام می‌دهد و برخلاف انتخاب دستی، برای هر رنگ
    دلخواهی کاربر جواب می‌دهد. */
 :root,
-.dark {
+:root[data-theme="dark"] {
   --bg: #0b0e13;
   --surface: #151a22;
   --raised: #1d2430;
@@ -49,7 +58,7 @@
   color-scheme: dark;
 }
 
-.light {
+:root[data-theme="light"] {
   --bg: #f5f7fa;
   --surface: #ffffff;
   --raised: #eaeef4;
@@ -234,4 +243,54 @@ input[inputmode="numeric"] {
   html {
     @apply font-sans;
   }
+}
+/* استایل جدول در ادیتور Tiptap */
+.tiptap table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 8px 0;
+  overflow: hidden;
+  direction: rtl;
+}
+
+.tiptap table td,
+.tiptap table th {
+  border: 1px solid var(--line, #2a3241);
+  padding: 8px 12px;
+  min-width: 60px;
+  vertical-align: top;
+  position: relative;
+}
+
+.tiptap table th {
+  background: var(--raised, #1d2430);
+  font-weight: 700;
+  text-align: right;
+}
+
+.tiptap table td {
+  background: transparent;
+}
+
+.tiptap table .selectedCell:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(125, 211, 192, 0.15);
+  pointer-events: none;
+}
+
+.tiptap table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  background: var(--accent, #7dd3c0);
+  pointer-events: none;
+}
+
+.tiptap .tableWrapper {
+  overflow-x: auto;
 }

@@ -69,12 +69,23 @@ async function resolveTheme(): Promise<{ mode: ThemeMode; accent: string }> {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const theme = await resolveTheme();
 
+  /*
+    هم کلاس و هم data-theme روی <html> می‌نشینند و هر دو لازم است:
+    - data-theme: پالت خودِ اپ را تعیین می‌کند؛ globals.css آن را با
+      :root[data-theme="..."] می‌گیرد.
+    - کلاس dark/light: واریانت `dark:` تِیلویند و توکن‌های shadcn در بلوک
+      `.dark` را فعال می‌کند؛ بدون آن کامپوننت‌های shadcn در حالت تیره هم
+      توکن‌های روشن می‌گرفتند.
+
+    هر دو از همین theme.mode می‌آیند، پس سرور و اولین رندر کلاینت یکی‌اند و
+    theme-section هم هنگام پیش‌نمایش زنده دقیقاً همین دو را عوض می‌کند.
+  */
   return (
     <html
       lang="fa"
       dir="rtl"
       data-theme={theme.mode}
-      className={cn("h-full", "antialiased", vazirmatn.variable, geistMono.variable, "font-sans", geist.variable)}
+      className={cn(theme.mode, "h-full", "antialiased", vazirmatn.variable, geistMono.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full flex flex-col bg-bg text-text">
         {/*

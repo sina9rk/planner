@@ -61,7 +61,8 @@ async function getProfileStats(userId: string) {
   }
 
   const activeDays = activeDaysSet.size;
-  const completionPct = allTasks === 0 ? 0 : Math.round((completedTasks / allTasks) * 100);
+  const completionPct =
+    allTasks === 0 ? 0 : Math.round((completedTasks / allTasks) * 100);
 
   return {
     activeDays,
@@ -109,13 +110,18 @@ export default async function ProfilePage() {
           <h3 className="mb-3 text-sm font-medium text-muted">آمار کلی</h3>
           <div className="grid grid-cols-3 gap-2">
             <StatTile value={faNum(stats.activeDays)} label="روز فعال" />
-            <StatTile value={faPercent(stats.completionPct / 100)} label="تکمیل" />
+            <StatTile
+              value={faPercent(stats.completionPct / 100)}
+              label="تکمیل"
+            />
             <StatTile value={faNum(stats.activeGoals)} label="هدف فعال" />
           </div>
         </section>
 
         <section>
-          <h3 className="mb-3 text-sm font-medium text-muted">محورهای شخصیتی</h3>
+          <h3 className="mb-3 text-sm font-medium text-muted">
+            محورهای شخصیتی
+          </h3>
           <div className="space-y-3 rounded-2xl border border-line bg-surface p-4">
             <div>
               <div className="mb-2 flex items-center justify-between text-xs text-muted">
@@ -127,16 +133,22 @@ export default async function ProfilePage() {
             <div>
               <div className="mb-2 flex items-center justify-between text-xs text-muted">
                 <span>ساختار</span>
-                <span>{faNum(Math.round(persona.traitAxis.structure * 100))}</span>
+                <span>
+                  {faNum(Math.round(persona.traitAxis.structure * 100))}
+                </span>
               </div>
               <Bar percent={Math.round(persona.traitAxis.structure * 100)} />
             </div>
             <div>
               <div className="mb-2 flex items-center justify-between text-xs text-muted">
                 <span>فشارمحور</span>
-                <span>{faNum(Math.round(persona.traitAxis.pressureDriven * 100))}</span>
+                <span>
+                  {faNum(Math.round(persona.traitAxis.pressureDriven * 100))}
+                </span>
               </div>
-              <Bar percent={Math.round(persona.traitAxis.pressureDriven * 100)} />
+              <Bar
+                percent={Math.round(persona.traitAxis.pressureDriven * 100)}
+              />
             </div>
           </div>
         </section>
@@ -153,10 +165,17 @@ export default async function ProfilePage() {
           </p>
           <div className="rounded-2xl border border-line bg-surface px-3.5">
             <InfoRow label="ایمیل" value={user.email} />
-            <InfoRow label="ساعت یادآوری" value={faTime(persona.suggestedReminderTime)} />
+            <InfoRow
+              label="ساعت یادآوری"
+              value={faTime(persona.suggestedReminderTime)}
+            />
             <InfoRow
               label="لحن پیام‌ها"
-              value={persona.toneStyle === "commander" ? "مستقیم و قاطع" : "آرام و دوستانه"}
+              value={
+                persona.toneStyle === "commander"
+                  ? "مستقیم و قاطع"
+                  : "آرام و دوستانه"
+              }
             />
           </div>
         </section>

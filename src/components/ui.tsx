@@ -14,7 +14,9 @@ import { ACCENT_PRESETS, isThemeMode, type ThemeMode } from "@/lib/theme";
 export function PageShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="flex min-h-dvh flex-col bg-bg px-4 py-8 text-text">
-      <div className="mx-auto flex w-full max-w-sm flex-1 flex-col">{children}</div>
+      <div className="mx-auto flex w-full max-w-sm flex-1 flex-col">
+        {children}
+      </div>
     </main>
   );
 }
@@ -26,18 +28,31 @@ export function PageShell({ children }: { children: React.ReactNode }) {
 export function AppShell({
   title,
   action,
+  accentTitle,
   children,
 }: {
   title: string;
   action?: React.ReactNode;
+  /**
+   * نوار عنوان تمام‌عرض با پس‌زمینهٔ accent. صفحهٔ جزئیات هدف از این حالت
+   * استفاده می‌کند چون عنوان آن باید بیرون از پدینگ معمول صفحه بنشیند.
+   * action در این حالت داخل نوار و گوشهٔ راست (سمت شروع متن RTL) می‌نشیند.
+   */
+  accentTitle?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <main className="flex min-h-dvh flex-col bg-bg pb-20 text-text">
-      <header className="mb-4 flex items-center justify-between gap-3 px-4 pt-5">
-        <h1 className="text-[20px] font-bold">{title}</h1>
-        {action}
-      </header>
+      {accentTitle ? (
+        <header className="relative mb-4 flex items-center justify-center bg-accent px-4 py-3.5">
+          <h1 className="text-center text-[20px] font-bold text-ink ">
+            {title}
+          </h1>
+          {action ? <div className="absolute right-4">{action}</div> : null}
+        </header>
+      ) : (
+        <header></header>
+      )}
       <div className="mx-auto w-full max-w-sm flex-1 px-4">{children}</div>
       <BottomNav />
     </main>
@@ -97,7 +112,10 @@ export function WaveHeader({
         aria-hidden="true"
         className="absolute -bottom-px right-0 h-8 w-full text-bg"
       >
-        <path d="M0 20 C 100 45, 300 -5, 400 20 L400 40 L0 40 Z" fill="currentColor" />
+        <path
+          d="M0 20 C 100 45, 300 -5, 400 20 L400 40 L0 40 Z"
+          fill="currentColor"
+        />
       </svg>
     </header>
   );
@@ -223,13 +241,7 @@ export function Avatar({
 }
 
 /** کارت آمار؛ `.st .box` مرجع با عدد بزرگ accent. */
-export function StatTile({
-  value,
-  label,
-}: {
-  value: string;
-  label: string;
-}) {
+export function StatTile({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex-1 rounded-2xl border border-line bg-surface px-1 py-2.5 text-center">
       <b className="block text-lg text-accent">{value}</b>

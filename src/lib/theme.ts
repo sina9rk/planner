@@ -60,3 +60,16 @@ export function normalizeThemeMode(value: string | null | undefined): ThemeMode 
 export function themeStyle(accent: string): string {
   return `--accent:${normalizeAccent(accent)}`;
 }
+
+/**
+ * کلید localStorage که نسخهٔ ذخیره‌شدهٔ تم در آن آینه می‌شود.
+ *
+ * فقط نوشتنی است: منبع حقیقت برای رندر همان دیتابیس است و این مقدار هیچ‌وقت
+ * هنگام رندر خوانده نمی‌شود، چون خواندنِ آن بین سرور و کلاینت فرق می‌کرد و
+ * همان hydration mismatch را برمی‌گرداند. فعلاً برای مصرف بعدی نگه داشته
+ * می‌شود (اسکریپت پیش از hydration یا اجرای آفلاین در WebView).
+ */
+export const THEME_STORAGE_KEY = "planner:theme";
+
+/** شکل مقداری که زیر THEME_STORAGE_KEY ذخیره می‌شود. */
+export type StoredTheme = { accent: string; mode: ThemeMode };
