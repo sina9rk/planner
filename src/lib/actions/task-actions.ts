@@ -3,10 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { track } from "@/lib/track";
 import { PATHS } from "@/lib/flow";
 import { currentUserId } from "@/lib/guards";
+import {
+  createTask,
+  findOwnedTask,
+  findOwnedTaskSummary,
+  updateTaskCompletion,
+} from "@/services/tasks";
+import { findOwnedGoal } from "@/services/goals";
 
 const completeTaskSchema = z.object({
   taskId: z.string().min(1),
@@ -37,36 +43,20 @@ export async function completeTaskAction(formData: FormData) {
   const { taskId, durationMinutes, note } = parsed.data;
   const duration = durationMinutes ?? 0;
 
-  const task = await prisma.task.findFirst({
-    where: { id: taskId, userId },
-    select: { id: true, title: true, goalId: true, status: true },
-  });
+  const task = await findOwnedTaskSummary(taskId, userId);
 
   if (!task) {
     const errorPath = formData.get("redirectTo")?.toString() || PATHS.dashboard;
     redirect(errorPath);
   }
 
-  await prisma.$transaction(async (tx) => {
-    await tx.task.update({
-      where: { id: task.id },
-      data: {
-        status: "COMPLETED",
-        completedAt: new Date(),
-      },
-    });
-
-    if (task.goalId && duration > 0) {
-      await tx.goalLog.create({
-        data: {
-          goalId: task.goalId,
-          userId,
-          taskId: task.id,
-          durationMinutes: duration,
-          note: note || null,
-        },
-      });
-    }
+  await updateTaskCompletion({
+    taskId: task.id,
+    userId,
+    completed: true,
+    goalId: task.goalId,
+    durationMinutes: duration,
+    note: note || null,
   });
 
   if (task.goalId && duration > 0) {
@@ -164,22 +154,16 @@ export async function createTaskAction(formData: FormData) {
   };
 
   if (goalId) {
-    const goal = await prisma.goal.findFirst({
-      where: { id: goalId, userId },
-      select: { id: true },
-    });
+    const goal = await findOwnedGoal(goalId, userId);
     if (goal) data.goalId = goal.id;
   }
 
   if (parentTaskId) {
-    const parent = await prisma.task.findFirst({
-      where: { id: parentTaskId, userId },
-      select: { id: true },
-    });
+    const parent = await findOwnedTask(parentTaskId, userId);
     if (parent) data.parentTaskId = parent.id;
   }
 
-  const task = await prisma.task.create({ data });
+  const task = await createTask(data);
 
   await track(
     userId,

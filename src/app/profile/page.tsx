@@ -4,7 +4,7 @@ import { AppShell, Bar, InfoRow, StatTile } from "@/components/ui";
 import { requirePersona } from "@/lib/guards";
 import { PATHS } from "@/lib/flow";
 import { findPersona } from "@/lib/personas";
-import { prisma } from "@/lib/prisma";
+import { getProfileOverview } from "@/services/profile";
 import { faNum, faPercent, faTime } from "@/lib/fa";
 import { startOfWeek } from "@/lib/goals";
 import { normalizeAccent, normalizeThemeMode } from "@/lib/theme";
@@ -15,61 +15,17 @@ import { ThemeSection } from "./theme-section";
 export const metadata = { title: "پروفایل | Planner" };
 
 async function getProfileStats(userId: string) {
-  const now = new Date();
-
-  const goalLogs = await prisma.goalLog.findMany({
-    where: { userId },
-    select: { loggedAt: true },
-  });
-
-  const [completedTasks, allTasks, activeGoals] = await Promise.all([
-    prisma.task.count({
-      where: { userId, status: "COMPLETED", parentTaskId: null },
-    }),
-    prisma.task.count({
-      where: { userId, parentTaskId: null },
-    }),
-    prisma.goal.count({
-      where: { userId, active: true },
-    }),
-  ]);
-
-  const activeDaysSet = new Set<string>();
-
-  for (const log of goalLogs) {
-    const d = log.loggedAt;
-    activeDaysSet.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
-  }
-
-  const sinceWeek = startOfWeek(now);
-
-  const weekCompletedTasks = await prisma.task.findMany({
-    where: {
-      userId,
-      status: "COMPLETED",
-      parentTaskId: null,
-      completedAt: { gte: sinceWeek },
-    },
-    select: { completedAt: true },
-  });
-
-  for (const t of weekCompletedTasks) {
-    if (t.completedAt) {
-      const d = t.completedAt;
-      activeDaysSet.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
-    }
-  }
-
-  const activeDays = activeDaysSet.size;
-  const completionPct =
-    allTasks === 0 ? 0 : Math.round((completedTasks / allTasks) * 100);
+  const overview = await getProfileOverview(userId, startOfWeek(new Date()));
 
   return {
-    activeDays,
-    completionPct,
-    activeGoals,
-    completedTasks,
-    allTasks,
+    activeDays: overview.activeDays,
+    completionPct:
+      overview.allTasks === 0
+        ? 0
+        : Math.round((overview.completedTasks / overview.allTasks) * 100),
+    activeGoals: overview.activeGoals,
+    completedTasks: overview.completedTasks,
+    allTasks: overview.allTasks,
   };
 }
 

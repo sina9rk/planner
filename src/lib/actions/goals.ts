@@ -3,11 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { track } from "@/lib/track";
 import { PATHS } from "@/lib/flow";
 import { currentUserId } from "@/lib/guards";
 import { findPersona } from "@/lib/personas";
+import { findUserPersonaId } from "@/services/users";
+import {
+  createGoal,
+  createGoalLog,
+  deleteOwnedGoal,
+  findOwnedGoalSummary,
+} from "@/services/goals";
 
 /**
  * اهداف و لاگ‌های آن‌ها (مرحلهٔ ۳).
@@ -91,26 +97,20 @@ export async function createGoalAction(formData: FormData) {
 
   const data = parsed.data;
 
-  // یک کوئری برای هر دو چیز لازم: personaId کاربر و نامی که در Event ثبت می‌شود.
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { personaId: true },
-  });
+  const user = await findUserPersonaId(userId);
   const persona = await findPersona(user?.personaId);
 
-  const goal = await prisma.goal.create({
-    data: {
-      userId,
-      title: data.title,
-      targetMinutesPerWeek: data.targetMinutesPerWeek ?? null,
-      targetDaysPerWeek: data.targetDaysPerWeek ?? null,
-      // ساعت یادآوری پیش‌فرض از پرسونای کاربر می‌آید، نه از حدس ثابت: همان
-      // چیزی است که در صفحهٔ نتیجه به او وعده داده شده.
-      reminderTime: data.reminderTime || persona?.suggestedReminderTime || null,
-      // روزها فقط وقتی ذخیره می‌شوند که کاربر انتخاب کرده باشد. آرایهٔ خالی
-      // یعنی «هر روز» و در محاسبهٔ زمان‌بندی نوتیف به همین شکل تفسیر می‌شود.
-      reminderDays: normalizeDays(data.reminderDays),
-    },
+  const goal = await createGoal({
+    userId,
+    title: data.title,
+    targetMinutesPerWeek: data.targetMinutesPerWeek ?? null,
+    targetDaysPerWeek: data.targetDaysPerWeek ?? null,
+    // ساعت یادآوری پیش‌فرض از پرسونای کاربر می‌آید، نه از حدس ثابت: همان
+    // چیزی است که در صفحهٔ نتیجه به او وعده داده شده.
+    reminderTime: data.reminderTime || persona?.suggestedReminderTime || null,
+    // روزها فقط وقتی ذخیره می‌شوند که کاربر انتخاب کرده باشد. آرایهٔ خالی
+    // یعنی «هر روز» و در محاسبهٔ زمان‌بندی نوتیف به همین شکل تفسیر می‌شود.
+    reminderDays: normalizeDays(data.reminderDays),
   });
 
   await track(userId, "goal_created", {
@@ -133,7 +133,7 @@ export async function deleteGoalAction(formData: FormData) {
 
   // شرط userId در where، همان محافظت مالکیت است: اگر goalId مال کاربر دیگری
   // باشد، count صفر می‌شود و چیزی حذف نمی‌شود.
-  const { count } = await prisma.goal.deleteMany({ where: { id: goalId, userId } });
+  const { count } = await deleteOwnedGoal(goalId, userId);
 
   if (count > 0) {
     await track(userId, "goal_deleted", {}, undefined, goalId);
@@ -154,19 +154,14 @@ export async function addGoalLogAction(formData: FormData) {
   });
   if (!parsed.success) redirect(PATHS.dashboard);
 
-  const goal = await prisma.goal.findFirst({
-    where: { id: parsed.data.goalId, userId },
-    select: { id: true, title: true },
-  });
+  const goal = await findOwnedGoalSummary(parsed.data.goalId, userId);
   if (!goal) redirect(PATHS.goals);
 
-  await prisma.goalLog.create({
-    data: {
-      goalId: goal.id,
-      userId,
-      durationMinutes: parsed.data.durationMinutes,
-      note: parsed.data.note || null,
-    },
+  await createGoalLog({
+    goalId: goal.id,
+    userId,
+    durationMinutes: parsed.data.durationMinutes,
+    note: parsed.data.note || null,
   });
 
   await track(

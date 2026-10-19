@@ -1,7 +1,12 @@
 "use server";
 
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import {
+  createUserWithPassword,
+  emailExists,
+  findUserPersonaByEmail,
+  markBehaviorLogConsent,
+} from "@/services/users";
 import { signIn, signOut } from "@/lib/auth";
 import { hashPassword } from "@/lib/password";
 import { track } from "@/lib/track";
@@ -56,10 +61,7 @@ export async function loginAction(
   // پرسشنامه را داده به داشبورد می‌رود و کسی که نداده به آنبوردینگ. این
   // قبلاً داخل catch اتفاق می‌افتاد که یعنی اگر signIn خطا می‌داد، دو کوئری
   // اضافه و بدون استفاده می‌خوردیم.
-  const existing = await prisma.user.findUnique({
-    where: { email },
-    select: { personaId: true },
-  });
+  const existing = await findUserPersonaByEmail(email);
 
   try {
     await signIn("credentials", {
@@ -112,10 +114,7 @@ export async function registerAction(
 
   // بررسی پیشاپیش فقط برای پیام دقیق به کاربر است؛ منبع نهایی محدودیت یکتایی
   // دیتابیس است و در catch هم دوباره چک می‌شود.
-  const existing = await prisma.user.findUnique({
-    where: { email },
-    select: { id: true },
-  });
+  const existing = await emailExists(email);
   if (existing) {
     return {
       error: "این ایمیل قبلاً ثبت شده است.",
@@ -127,9 +126,10 @@ export async function registerAction(
 
   let userId: string;
   try {
-    const user = await prisma.user.create({
-      data: { email, displayName, passwordHash },
-      select: { id: true },
+    const user = await createUserWithPassword({
+      email,
+      displayName,
+      passwordHash,
     });
     userId = user.id;
   } catch (err) {
@@ -151,10 +151,7 @@ export async function registerAction(
   //
   // consentBehaviorLog همین‌جا روشن می‌شود: از این لحظه track رویدادهای رفتاری
   // را شروع می‌کند، پس رضایت باید از قبل ثبت شده باشد.
-  await prisma.user.update({
-    where: { id: userId },
-    data: { consentBehaviorLog: new Date() },
-  });
+  await markBehaviorLogConsent(userId);
   await track(userId, "account_created", {
     hasDisplayName: Boolean(displayName),
   });

@@ -1,7 +1,7 @@
 import type { Session } from "next-auth";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { findSessionUserByEmail } from "@/services/users";
 import { PATHS } from "@/lib/flow";
 
 /**
@@ -37,19 +37,7 @@ export async function requireUser(
     redirect(redirectTo);
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: {
-      id: true,
-      email: true,
-      displayName: true,
-      timezone: true,
-      personaId: true,
-      onboardingAnswers: true,
-      themeAccent: true,
-      themeMode: true,
-    },
-  });
+  const user = await findSessionUserByEmail(email);
 
   if (!user) {
     // نشست معتبر است ولی کاربر در دیتابیس نیست (مثلاً دیتابیس ریست شده).

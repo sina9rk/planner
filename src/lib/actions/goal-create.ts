@@ -2,11 +2,12 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { track } from "@/lib/track";
 import { PATHS } from "@/lib/flow";
 import { currentUserId } from "@/lib/guards";
 import { findPersona } from "@/lib/personas";
+import { findUserPersonaId } from "@/services/users";
+import { createGoal } from "@/services/goals";
 
 const goalSchema = z
   .object({
@@ -45,18 +46,16 @@ export async function createGoalAction(formData: FormData) {
   if (!parsed.success) redirect(PATHS.goalsNew);
 
   const data = parsed.data;
-  const user = await prisma.user.findUnique({ where: { id: userId }, select: { personaId: true } });
+  const user = await findUserPersonaId(userId);
   const persona = await findPersona(user?.personaId);
 
-  const goal = await prisma.goal.create({
-    data: {
-      userId,
-      title: data.title,
-      targetMinutesPerWeek: data.targetMinutesPerWeek ?? null,
-      targetDaysPerWeek: data.targetDaysPerWeek ?? null,
-      reminderTime: data.reminderTime || persona?.suggestedReminderTime || null,
-      reminderDays: normalizeDays(data.reminderDays),
-    },
+  const goal = await createGoal({
+    userId,
+    title: data.title,
+    targetMinutesPerWeek: data.targetMinutesPerWeek ?? null,
+    targetDaysPerWeek: data.targetDaysPerWeek ?? null,
+    reminderTime: data.reminderTime || persona?.suggestedReminderTime || null,
+    reminderDays: normalizeDays(data.reminderDays),
   });
 
   await track(

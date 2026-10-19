@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 import { requirePersona } from "@/lib/guards";
-import { prisma } from "@/lib/prisma";
+import { findGoalDetail } from "@/services/goals";
 import { AppShell, StatTile } from "@/components/ui";
 import { PATHS } from "@/lib/flow";
 import { faClock, faMinutes, faNum, faPercent, faRelativeDate } from "@/lib/fa";
@@ -20,18 +20,7 @@ export default async function GoalDetailPage({
   const { id } = await params;
   const user = await requirePersona();
 
-  const goal = await prisma.goal.findFirst({
-    where: { id, userId: user.id },
-    include: {
-      logs: {
-        orderBy: { loggedAt: "desc" },
-        take: 200,
-      },
-      tasks: {
-        orderBy: { createdAt: "asc" },
-      },
-    },
-  });
+  const goal = await findGoalDetail(id, user.id);
 
   if (!goal) notFound();
 

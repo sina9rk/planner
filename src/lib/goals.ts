@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { listGoalLogDatesSince, listGoalsWithLogsSince } from "@/services/goals";
 
 /**
  * محاسبهٔ پیشرفت هفتگی اهداف.
@@ -86,16 +86,7 @@ export async function weeklyProgress(
 ): Promise<GoalProgress[]> {
   const since = startOfWeek(now);
 
-  const goals = await prisma.goal.findMany({
-    where: { userId },
-    orderBy: { createdAt: "asc" },
-    include: {
-      logs: {
-        where: { loggedAt: { gte: since } },
-        select: { durationMinutes: true, loggedAt: true },
-      },
-    },
-  });
+  const goals = await listGoalsWithLogsSince(userId, since);
 
   return goals.map((goal) => {
     const doneMinutes = goal.logs.reduce(
@@ -131,10 +122,7 @@ export async function weeklyTotals(
   now = new Date(),
 ): Promise<{ doneMinutes: number; doneDays: number; activeGoals: number }> {
   const rows = await weeklyProgress(userId, now);
-  const logs = await prisma.goalLog.findMany({
-    where: { userId, loggedAt: { gte: startOfWeek(now) } },
-    select: { loggedAt: true },
-  });
+  const logs = await listGoalLogDatesSince(userId, startOfWeek(now));
 
   return {
     doneMinutes: rows.reduce((sum, row) => sum + row.doneMinutes, 0),

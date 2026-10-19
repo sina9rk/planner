@@ -3,11 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
 import { track } from "@/lib/track";
 import { PATHS } from "@/lib/flow";
 import { currentUserId } from "@/lib/guards";
+import {
+  findOnboardingAnswers,
+  resetOnboarding,
+  setUserPersona,
+  updateOnboardingAnswers,
+} from "@/services/users";
 import {
   readQuestions,
   scorePersona,
@@ -44,10 +48,7 @@ export async function answerQuestionAction(formData: FormData) {
 
   if (!parsed.success) redirect(PATHS.onboarding);
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { onboardingAnswers: true },
-  });
+  const user = await findOnboardingAnswers(userId);
   if (!user) redirect(PATHS.login);
 
   const answers = parseAnswers(user.onboardingAnswers);
@@ -72,10 +73,7 @@ export async function answerQuestionAction(formData: FormData) {
     return orderA - orderB;
   });
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: { onboardingAnswers: next as never },
-  });
+  await updateOnboardingAnswers(userId, next);
 
   await track(userId, "onboarding_answered", {
     questionId: question.id,
@@ -94,10 +92,7 @@ export async function answerQuestionAction(formData: FormData) {
   if (next.length >= questions.length) {
     const persona = await scorePersona(next);
     if (persona) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { personaId: persona.id },
-      });
+      await setUserPersona(userId, persona.id);
       await track(userId, "persona_assigned", {
         personaId: persona.id,
         toneStyle: persona.toneStyle,
@@ -121,10 +116,7 @@ export async function restartOnboardingAction() {
   const userId = await currentUserId();
   if (!userId) redirect(PATHS.login);
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: { onboardingAnswers: Prisma.DbNull, personaId: null },
-  });
+  await resetOnboarding(userId);
 
   await track(userId, "onboarding_reset", {});
 

@@ -1,4 +1,5 @@
-import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
+import { createEvent } from "@/services/events";
 
 /**
  * ثبت رویداد. این جدول مهم‌ترین جدول پروژه است: فقط اضافه می‌شود و هرگز
@@ -18,25 +19,14 @@ import { prisma } from "@/lib/prisma";
 export async function track(
   userId: string,
   eventType: string,
-  metadata?: Record<string, unknown>,
+  metadata?: Prisma.InputJsonObject,
   taskId?: string,
   goalId?: string,
 ) {
   if (!userId) return;
 
   try {
-    await prisma.event.create({
-      data: {
-        userId,
-        eventType,
-        taskId: taskId ?? null,
-        goalId: goalId ?? null,
-        // Prisma با Json در TS نیاز به cast دارد چون ورودی عمومی‌تری از
-        // Prisma.InputJsonValue می‌پذیرد. این cast امن است چون ما خودمان
-        // metadata را می‌سازیم و مقدار بی‌serializable وارد نمی‌کنیم.
-        metadata: (metadata ?? undefined) as never,
-      },
-    });
+    await createEvent({ userId, eventType, metadata, taskId, goalId });
   } catch (err) {
     console.error("track failed:", err);
   }
@@ -70,7 +60,7 @@ export type EventType =
 
 export type TrackInput = {
   eventType: EventType;
-  metadata?: Record<string, unknown>;
+  metadata?: Prisma.InputJsonObject;
   taskId?: string;
   goalId?: string;
 };

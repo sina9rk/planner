@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
 import { findPersona, scoreBreakdown, type OnboardingAnswer } from "@/lib/personas";
+import { getProfileStatsInputs } from "@/services/profile";
 
 /**
  * آمار پروفایل (مرحلهٔ ۷). همه از داده‌های واقعی محاسبه می‌شوند، نه عدد
@@ -86,21 +86,7 @@ export async function profileStats(
   // since فعلاً استفاده نمی‌شود؛ آمار کلی پروفایل در فاز بعد دقیق‌تر خواهد شد.
   // const since = startOfWeek(new Date(Date.now() - 30 * 86400000));
 
-  const [logs, taskCounts, goalLogs] = await Promise.all([
-    prisma.goalLog.findMany({
-      where: { userId },
-      select: { durationMinutes: true, loggedAt: true },
-    }),
-    prisma.task.groupBy({
-      by: ["status"],
-      where: { userId, parentTaskId: null },
-      _count: { _all: true },
-    }),
-    prisma.event.findMany({
-      where: { userId, eventType: "task_completed" },
-      select: { timestamp: true },
-    }),
-  ]);
+  const { logs, taskCounts, events } = await getProfileStatsInputs(userId);
 
   const totalMinutes = logs.reduce((sum, log) => sum + log.durationMinutes, 0);
 
@@ -109,7 +95,7 @@ export async function profileStats(
   for (const log of logs) {
     activeDayKeys.add(dayKey(log.loggedAt));
   }
-  for (const event of goalLogs) {
+  for (const event of events) {
     activeDayKeys.add(dayKey(event.timestamp));
   }
 

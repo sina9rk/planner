@@ -3,10 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { track } from "@/lib/track";
 import { PATHS } from "@/lib/flow";
 import { currentUserId } from "@/lib/guards";
+import { setUserTheme } from "@/services/users";
 import {
   DEFAULT_ACCENT,
   isValidAccent,
@@ -47,10 +47,7 @@ export async function saveThemeAction(formData: FormData) {
   const accent = normalizeAccent(parsed.data.accent);
   const mode = normalizeThemeMode(parsed.data.mode);
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: { themeAccent: accent, themeMode: mode },
-  });
+  await setUserTheme(userId, accent, mode);
 
   await track(userId, "theme_changed", { accent, mode });
 
@@ -66,10 +63,7 @@ export async function resetThemeAction() {
   const userId = await currentUserId();
   if (!userId) backToProfile();
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: { themeAccent: DEFAULT_ACCENT, themeMode: "dark" },
-  });
+  await setUserTheme(userId, DEFAULT_ACCENT, "dark");
 
   await track(userId, "theme_changed", {
     accent: DEFAULT_ACCENT,

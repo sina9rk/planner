@@ -1,5 +1,5 @@
 import { requirePersona } from "@/lib/guards";
-import { prisma } from "@/lib/prisma";
+import { listTasksForUser } from "@/services/tasks";
 import { TasksPageClient } from "./tasks-page-client";
 
 export const metadata = { title: "تسک‌ها | برنامه‌ریز" };
@@ -7,15 +7,7 @@ export const metadata = { title: "تسک‌ها | برنامه‌ریز" };
 export default async function TasksPage() {
   const user = await requirePersona();
 
-  const tasks = await prisma.task.findMany({
-    where: { userId: user.id },
-    orderBy: [{ status: "asc" }, { scheduledFor: "asc" }, { createdAt: "desc" }],
-    include: {
-      goal: {
-        select: { id: true, title: true },
-      },
-    },
-  });
+  const tasks = await listTasksForUser(user.id);
 
   return (
     <TasksPageClient

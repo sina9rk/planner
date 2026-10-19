@@ -5,7 +5,8 @@
  * با کلاس‌های Tailwind روی متغیرهای پروژه نوشته شده‌اند تا با تغییر accent
  * از پروفایل همه‌جا هماهنگ عوض شوند.
  */
-
+import BottomNav from "./bottom-nav";
+import { LayoutDashboard, Target, ListChecks, UserRound } from "lucide-react";
 import Link from "next/link";
 import { toFa } from "@/lib/fa";
 import { ACCENT_PRESETS, isThemeMode, type ThemeMode } from "@/lib/theme";
@@ -44,7 +45,7 @@ export function AppShell({
   return (
     <main className="flex min-h-dvh flex-col bg-bg pb-20 text-text">
       {accentTitle ? (
-        <header className="relative mb-4 flex items-center justify-center bg-accent px-4 py-3.5">
+        <header className="relative mb-4 flex items-center justify-center bg-[#1D2430] px-4 py-3.5">
           <h1 className="text-center text-[20px] font-bold text-ink ">
             {title}
           </h1>
@@ -60,31 +61,6 @@ export function AppShell({
 }
 
 /** ناوبری پایین؛ جای ناوبری در مرجع طراحی خالی است و حدس خودم است. */
-function BottomNav() {
-  const items = [
-    { href: "/dashboard", label: "داشبورد" },
-    { href: "/goals", label: "اهداف" },
-    { href: "/tasks", label: "تسک‌ها" },
-    { href: "/profile", label: "پروفایل" },
-  ];
-
-  return (
-    <nav className="fixed inset-x-0 bottom-0 border-t border-line bg-surface">
-      <ul className="mx-auto flex max-w-sm">
-        {items.map((item) => (
-          <li key={item.href} className="flex-1">
-            <Link
-              href={item.href}
-              className="block py-3 text-center text-[12px] text-muted transition hover:text-accent"
-            >
-              {item.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
 
 /** سربرگ موجی صفحه‌های auth، مطابق مرجع طراحی. */
 export function WaveHeader({

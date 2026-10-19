@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { findUserIdentityByEmail } from "@/services/users";
 import { track } from "@/lib/track";
 import { readPersonas } from "@/lib/personas";
 import { afterAuth } from "@/lib/flow";
@@ -18,10 +18,7 @@ export default async function HomePage() {
   const session = await auth();
   if (!session?.user?.email) redirect("/login");
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { id: true, personaId: true },
-  });
+  const user = await findUserIdentityByEmail(session.user.email);
 
   // باز شدن اپ یک اکشن کاربر است و باید ثبت شود. اگر کاربر پیدا نشود (مثلاً
   // نشست از دیتابیس دیگری آمده) track چیزی ثبت نمی‌کند چون userId خالی است.

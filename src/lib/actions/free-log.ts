@@ -3,10 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { track } from "@/lib/track";
 import { PATHS } from "@/lib/flow";
 import { currentUserId } from "@/lib/guards";
+import { createGoalLog, findOwnedGoalSummary } from "@/services/goals";
 
 const freeLogSchema = z.object({
   goalId: z.string().min(1),
@@ -36,21 +36,16 @@ export async function addFreeGoalLogAction(formData: FormData) {
 
   const { goalId, durationMinutes, note } = parsed.data;
 
-  const goal = await prisma.goal.findFirst({
-    where: { id: goalId, userId },
-    select: { id: true, title: true },
-  });
+  const goal = await findOwnedGoalSummary(goalId, userId);
 
   if (!goal) redirect(PATHS.goals);
 
-  await prisma.goalLog.create({
-    data: {
-      goalId: goal.id,
-      userId,
-      taskId: null,
-      durationMinutes,
-      note: note || null,
-    },
+  await createGoalLog({
+    goalId: goal.id,
+    userId,
+    taskId: null,
+    durationMinutes,
+    note: note || null,
   });
 
   await track(

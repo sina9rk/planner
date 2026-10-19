@@ -76,7 +76,7 @@ export default async function GoalsListPage() {
 
       <Link
         href={PATHS.goalsNew}
-        className="fixed bottom-20 left-4 grid size-11 place-items-center rounded-full bg-accent text-2xl font-bold text-ink shadow-lg"
+        className="fixed text-gray-100 bottom-25 left-5 grid size-11 place-items-center rounded-full bg-accent text-2xl font-bold  shadow-lg"
       >
         +
       </Link>

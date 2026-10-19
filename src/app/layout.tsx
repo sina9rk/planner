@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Vazirmatn, Geist } from "next/font/google";
 import "./globals.css";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { findUserThemeByEmail } from "@/services/users";
 import {
   DEFAULT_ACCENT,
   normalizeAccent,
@@ -53,10 +53,7 @@ async function resolveTheme(): Promise<{ mode: ThemeMode; accent: string }> {
   const email = session?.user?.email;
   if (!email) return FALLBACK;
 
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { themeAccent: true, themeMode: true },
-  });
+  const user = await findUserThemeByEmail(email);
 
   if (!user) return FALLBACK;
 

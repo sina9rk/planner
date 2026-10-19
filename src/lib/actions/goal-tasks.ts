@@ -3,10 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { track } from "@/lib/track";
 import { PATHS } from "@/lib/flow";
 import { currentUserId } from "@/lib/guards";
+import { createTask, findOwnedTaskSummary, updateTaskCompletion } from "@/services/tasks";
+import { findOwnedGoal } from "@/services/goals";
 
 const toggleSchema = z.object({
   taskId: z.string().min(1),
@@ -43,10 +44,7 @@ export async function toggleGoalTaskAction(formData: FormData) {
 
   const { taskId, durationMinutes, redirectTo } = parsed.data;
 
-  const task = await prisma.task.findFirst({
-    where: { id: taskId, userId },
-    select: { id: true, title: true, goalId: true, status: true },
-  });
+  const task = await findOwnedTaskSummary(taskId, userId);
 
   if (!task) {
     if (redirectTo) redirect(redirectTo);
@@ -54,29 +52,14 @@ export async function toggleGoalTaskAction(formData: FormData) {
   }
 
   const isCompleting = task.status !== "COMPLETED";
-  const nextStatus = isCompleting ? "COMPLETED" : "PENDING";
   const duration = durationMinutes ?? 0;
 
-  await prisma.$transaction(async (tx) => {
-    await tx.task.update({
-      where: { id: task.id },
-      data: {
-        status: nextStatus,
-        completedAt: isCompleting ? new Date() : null,
-      },
-    });
-
-    if (isCompleting && task.goalId && duration > 0) {
-      await tx.goalLog.create({
-        data: {
-          goalId: task.goalId,
-          userId,
-          taskId: task.id,
-          durationMinutes: duration,
-          note: null,
-        },
-      });
-    }
+  await updateTaskCompletion({
+    taskId: task.id,
+    userId,
+    completed: isCompleting,
+    goalId: task.goalId,
+    durationMinutes: duration,
   });
 
   if (isCompleting) {
@@ -135,22 +118,20 @@ export async function createGoalTaskAction(formData: FormData) {
 
   const { goalId, title, redirectTo } = parsed.data;
 
-  const goal = await prisma.goal.findFirst({
-    where: { id: goalId, userId },
-    select: { id: true },
-  });
+  const goal = await findOwnedGoal(goalId, userId);
 
   if (!goal) {
     if (redirectTo) redirect(redirectTo);
     redirect(PATHS.goals);
   }
 
-  await prisma.task.create({
-    data: {
-      userId,
-      goalId: goal.id,
-      title,
-    },
+  await createTask({
+    userId,
+    goalId: goal.id,
+    title,
+    description: null,
+    scheduledFor: null,
+    deadline: null,
   });
 
   const rPath = redirectTo || `${PATHS.goals}/${goal.id}`;

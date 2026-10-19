@@ -3,10 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { track } from "@/lib/track";
 import { PATHS } from "@/lib/flow";
 import { currentUserId } from "@/lib/guards";
+import {
+  findOwnedTaskSummary,
+  setTaskStatus,
+  updateTaskCompletion,
+} from "@/services/tasks";
 
 const toggleTaskSchema = z.object({
   taskId: z.string().min(1),
@@ -40,10 +44,7 @@ export async function toggleTaskAction(formData: FormData) {
 
   const { taskId, redirectTo: r } = parsed.data;
 
-  const task = await prisma.task.findFirst({
-    where: { id: taskId, userId },
-    select: { id: true, title: true, goalId: true, status: true },
-  });
+  const task = await findOwnedTaskSummary(taskId, userId);
 
   if (!task) {
     redirect(r || PATHS.dashboard);
@@ -53,10 +54,7 @@ export async function toggleTaskAction(formData: FormData) {
     redirect(r || `${PATHS.goals}/${task.goalId || ""}`);
   }
 
-  await prisma.task.update({
-    where: { id: task.id },
-    data: { status: "COMPLETED", completedAt: new Date() },
-  });
+  await setTaskStatus(task.id, "COMPLETED", new Date());
 
   await track(
     userId,
@@ -98,32 +96,19 @@ export async function completeTaskWithLogAction(formData: FormData) {
 
   const { taskId, durationMinutes, note, redirectTo: r } = parsed.data;
 
-  const task = await prisma.task.findFirst({
-    where: { id: taskId, userId },
-    select: { id: true, title: true, goalId: true, status: true },
-  });
+  const task = await findOwnedTaskSummary(taskId, userId);
 
   if (!task) {
     redirect(r || PATHS.dashboard);
   }
 
-  await prisma.$transaction(async (tx) => {
-    await tx.task.update({
-      where: { id: task.id },
-      data: { status: "COMPLETED", completedAt: new Date() },
-    });
-
-    if (task.goalId) {
-      await tx.goalLog.create({
-        data: {
-          goalId: task.goalId,
-          userId,
-          taskId: task.id,
-          durationMinutes,
-          note: note || null,
-        },
-      });
-    }
+  await updateTaskCompletion({
+    taskId: task.id,
+    userId,
+    completed: true,
+    goalId: task.goalId,
+    durationMinutes,
+    note: note || null,
   });
 
   if (task.goalId) {

@@ -1,6 +1,6 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { prisma } from "@/lib/prisma";
+import { findUserForLogin } from "@/services/users";
 import { verifyPassword } from "@/lib/password";
 import { loginSchema, normalizeEmail } from "@/lib/validation";
 
@@ -40,18 +40,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const { email, password } = parsed.data;
 
-    const user = await prisma.user.findUnique({
-      where: { email: normalizeEmail(email) },
-      select: {
-        id: true,
-        email: true,
-        displayName: true,
-        passwordHash: true,
-      },
-    });
+        const user = await findUserForLogin(normalizeEmail(email));
 
-    // اگر کاربر فقط با گوگل آمده باشد، passwordHash خالی است و compare
-    // بی‌معنی می‌شود؛ در این حالت همان مسیر تأخیر مصنوعی را می‌رود.
+        // اگر کاربر فقط با گوگل آمده باشد، passwordHash خالی است و compare
+        // بی‌معنی می‌شود؛ در این حالت همان مسیر تأخیر مصنوعی را می‌رود.
 
         // همیشه compare اجرا می‌شود (حتی وقتی کاربر نیست) تا زمان پاسخ
         // اطلاعاتی دربارهٔ وجودِ ایمیل لو ندهد.
