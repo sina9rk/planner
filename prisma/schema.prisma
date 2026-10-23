@@ -13,29 +13,29 @@ datasource db {
 // تنظیمات تعریف می‌شوند (نه در دیتابیس)، تا تغییرشان migration نخواهد.
 // ---------------------------------------------------------------
 model User {
-  id                 String    @id @default(uuid())
-  authId             String?   @unique   // شناسه‌ی کاربر در سیستم احراز هویت (nullable تا زمان اتصال Auth.js)
-  email              String    @unique
-  passwordHash       String?                      // برای ورود با ایمیل/رمز (Auth.js credentials)
-  displayName        String?
-  timezone           String    @default("Asia/Tehran")
+  id           String  @id @default(uuid())
+  authId       String? @unique // شناسه‌ی کاربر در سیستم احراز هویت (nullable تا زمان اتصال Auth.js)
+  email        String  @unique
+  passwordHash String? // برای ورود با ایمیل/رمز (Auth.js credentials)
+  displayName  String?
+  timezone     String  @default("Asia/Tehran")
 
-  personaId          String?                      // مثلاً "focused_structured" - از فایل JSON پرسوناها
-  profileSource      String    @default("questionnaire") // بعداً: "ml_cluster"
-  onboardingAnswers  Json?                        // پاسخ‌های خام پرسشنامه (برای تحلیل بعدی)
+  personaId         String? // مثلاً "focused_structured" - از فایل JSON پرسوناها
+  profileSource     String  @default("questionnaire") // بعداً: "ml_cluster"
+  onboardingAnswers Json? // پاسخ‌های خام پرسشنامه (برای تحلیل بعدی)
 
   // تم اپ - رنگ تأکید آزاد، حالت نمایش محدود به دو گزینه برای تضمین خوانایی
-  themeAccent        String    @default("#7DD3C0")
-  themeMode          String    @default("dark")   // "dark" | "light"
+  themeAccent String @default("#7DD3C0")
+  themeMode   String @default("dark") // "dark" | "light"
 
-  consentBehaviorLog DateTime?                    // زمان رضایت به ثبت رفتار
+  consentBehaviorLog DateTime? // زمان رضایت به ثبت رفتار
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
-  tasks              Task[]
-  events             Event[]
-  goals              Goal[]
-  goalLogs           GoalLog[]
+  tasks    Task[]
+  events   Event[]
+  goals    Goal[]
+  goalLogs GoalLog[]
 
   @@index([personaId])
 }
@@ -44,29 +44,29 @@ model User {
 // Tasks: کارهای یک‌باره با ددلاین مشخص
 // ---------------------------------------------------------------
 model Task {
-  id             String     @id @default(uuid())
-  userId         String
-  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  title          String
-  description    String?
-  status         TaskStatus @default(PENDING)
+  title       String
+  description String?
+  status      TaskStatus @default(PENDING)
 
-  deadline       DateTime?
-  scheduledFor   DateTime?
-  completedAt    DateTime?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  deadline     DateTime?
+  scheduledFor DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  postponedCount Int        @default(0)
+  postponedCount Int @default(0)
 
-  parentTaskId   String?
-  parent         Task?      @relation("SubTasks", fields: [parentTaskId], references: [id], onDelete: Cascade)
-  subTasks       Task[]     @relation("SubTasks")
+  parentTaskId String?
+  parent       Task?   @relation("SubTasks", fields: [parentTaskId], references: [id], onDelete: Cascade)
+  subTasks     Task[]  @relation("SubTasks")
 
   // اگر پر باشد، یعنی این تسک زیرمجموعه‌ی یک هدف بلندمدت است (برنامه‌ریزی AI در آینده از همین استفاده می‌کند)
-  goalId         String?
-  goal           Goal?      @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  goalId String?
+  goal   Goal?   @relation(fields: [goalId], references: [id], onDelete: Cascade)
 
   createdByBreakdown Boolean @default(false)
 
@@ -89,40 +89,38 @@ enum TaskStatus {
 // یک GoalLog ثبت می‌شود.
 // ---------------------------------------------------------------
 model Goal {
-  id             String    @id @default(uuid())
-  userId         String
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  title          String
-  horizon        String    @default("weekly")   // "weekly" | "monthly" | "custom" - افق زمانی هدف
-  targetEndDate  DateTime?                       // برای horizon های monthly/custom، تاریخ پایان (اختیاری)
-  targetMinutesPerWeek Int?       // هدف هفتگی به دقیقه (برای داشبورد و نوار پیشرفت)
-  targetDaysPerWeek    Int?       // یا هدف بر اساس تعداد روز
-  reminderTime         String?    // ساعت یادآوری ثابت، مثلاً "07:30" (Local Notification)
-  reminderDays          Int[]     @default([])  // روزهای هفته، 0=یکشنبه ... 6=شنبه
+  title                String
+  archivedAt           DateTime?
+  targetMinutesPerWeek Int? // هدف هفتگی به دقیقه (برای داشبورد و نوار پیشرفت)
+  targetDaysPerWeek    Int? // یا هدف بر اساس تعداد روز
+  reminderTime         String? // ساعت یادآوری ثابت، مثلاً "07:30" (Local Notification)
+  reminderDays         Int[]     @default([]) // روزهای هفته، 0=یکشنبه ... 6=شنبه
 
-  active         Boolean   @default(true)
-  createdAt      DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  logs           GoalLog[]
-  tasks          Task[]    // تسک/زیرتسک‌های زیرمجموعه‌ی این هدف (برای برنامه‌ریزی بلندمدت و AI آینده)
+  logs  GoalLog[]
+  tasks Task[] // تسک/زیرتسک‌های زیرمجموعه‌ی این هدف (برای برنامه‌ریزی بلندمدت و AI آینده)
 
-  @@index([userId, active])
+  @@index([userId, archivedAt])
 }
 
 // هر رکورد یعنی یک جلسه‌ی کار روی هدف. یا مستقل ثبت می‌شود (کار آزاد، بدون تسک مشخص)
 // یا هنگام تیک‌زدن یک Task به‌صورت اختیاری ساخته می‌شود (taskId پر می‌شود).
 model GoalLog {
-  id             String    @id @default(uuid())
-  goalId         String
-  goal           Goal      @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  userId         String
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  taskId         String?                        // اختیاری: اگر این لاگ از تکمیل یک Task آمده باشد
+  id     String  @id @default(uuid())
+  goalId String
+  goal   Goal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId String? // اختیاری: اگر این لاگ از تکمیل یک Task آمده باشد
 
-  durationMinutes Int
-  note           String?                        // مثلاً "فصل سوم کتاب گرامر"
-  loggedAt       DateTime  @default(now())
+  durationMinutes Int      @default(0)
+  note            String? // مثلاً "فصل سوم کتاب گرامر"
+  loggedAt        DateTime @default(now())
 
   @@index([goalId, loggedAt])
   @@index([userId, loggedAt])
@@ -133,15 +131,15 @@ model GoalLog {
 // Events (Activity Log): مهم‌ترین جدول، فقط اضافه می‌شود (append-only)
 // ---------------------------------------------------------------
 model Event {
-  id        BigInt   @id @default(autoincrement())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     BigInt @id @default(autoincrement())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  eventType String   // task_completed, task_postponed, task_broken_down,
-                     // notification_opened, notification_ignored, app_opened,
-                     // goal_logged, onboarding_answered, ...
-  taskId    String?  // اختیاری (بدون FK، تا حذف تسک لاگ را از بین نبرد)
-  goalId    String?  // اختیاری، همین‌طور
+  eventType String // task_completed, task_postponed, task_broken_down,
+  // notification_opened, notification_ignored, app_opened,
+  // goal_logged, onboarding_answered, ...
+  taskId    String? // اختیاری (بدون FK، تا حذف تسک لاگ را از بین نبرد)
+  goalId    String? // اختیاری، همین‌طور
   metadata  Json?
   timestamp DateTime @default(now())
 
