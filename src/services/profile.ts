@@ -21,7 +21,7 @@ export async function getProfileOverview(userId: string, sinceWeek: Date) {
       where: { userId, parentTaskId: null },
     }),
     prisma.goal.count({
-      where: { userId, active: true },
+      where: { userId, archivedAt: null },
     }),
   ]);
 
